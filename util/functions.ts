@@ -1,0 +1,43 @@
+import defaults from 'defaults' with { type: 'json' }
+import User from 'class/user.ts'
+import Cmd from 'class/cmd.ts'
+import { Message } from 'wa'
+import { DateTime } from 'luxon'
+
+export { checkPerms, delay, now }
+
+// checkPerms: check cmd permissions like block random guys from using eval
+function checkPerms(cmd: Cmd, user: User, msg: Message) {
+	const isDev = defaults.devs.includes(user.phone)
+	// if a normal user tries to run a only-for-devs cmd
+
+	if (cmd.access.restrict && !isDev) return 'prohibited'
+
+	if (msg.id.remote.includes('@g.us')) { // if msg chat is a group
+		if (!cmd.access.groups) return 'block'
+
+		// to do: add admins check
+		// const admins = group.members.map((m) => m.admin && m.id)
+		// // all group admins id
+
+		// if (cmd.access.admin && (!admins.includes(user.chat) && !isDev)) {
+		// 	return 'prohibited' // Devs can use admin cmds for security reasons
+		// }
+	} else if (!cmd.access.dm) return 'block'
+	// if there's no group and cmd can't run on DM
+
+	return true
+}
+
+// get 'now' date time formatted
+function now(format = 'TT') {
+	return DateTime.now()
+		.setZone(defaults.timezone)
+		.setLocale(defaults.lang)
+		.toFormat(format) // TT = HOURS:MINITES:SECONDS
+}
+
+// delay: wait a few ms
+async function delay(ms: num) {
+	return await new Promise((resolve) => setTimeout(resolve, ms))
+}

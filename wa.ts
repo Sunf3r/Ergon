@@ -1,4 +1,4 @@
-import { folderHandler, loadCmd, loadEvent } from './util/client.ts'
+import { folderHandler, loadCmd, loadEvent } from 'util/client.ts'
 import { Client, LocalAuth } from 'wa'
 import proto, { run } from 'util/proto.ts'
 

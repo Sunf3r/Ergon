@@ -1,21 +1,12 @@
 import humanizeDuration, { Unit } from 'humanize-duration'
-import defaults from 'defaults' with { type: 'json' }
-import { DateTime } from 'luxon'
+import { now } from 'util/functions.ts'
 
-export { decode, now, run }
+export { decode, run }
 export default function () {
 	strPrototypes() // create string prototypes
 	numPrototypes() // create number prototypes
 
 	console.log = print // set custom console.log
-}
-
-// get 'now' date time formatted
-function now(format = 'TT') {
-	return DateTime.now()
-		.setZone(defaults.timezone)
-		.setLocale(defaults.lang)
-		.toFormat(format) // TT = HOURS:MINITES:SECONDS
 }
 
 function strPrototypes() {
@@ -103,10 +94,10 @@ async function run(cmd: str, callBack?: Func, time?: num) {
 	})
 
 	const cp = proc.spawn()
-	let text = 'Spawning cp...\n'
+	let text = ''
 	let interval
 
-	if (callBack) interval = setInterval(() => callBack(text), time || 500)
+	if (callBack) interval = setInterval(async () => await callBack(text), time || 500)
 
 	for await (const line of cp.stdout) text += decode(line)
 	for await (const line of cp.stderr) text += decode(line)
