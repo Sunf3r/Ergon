@@ -1,4 +1,5 @@
 import humanizeDuration, { Unit } from 'humanize-duration'
+import { Buffer } from 'node:buffer'
 import { now } from 'util/functions.ts'
 
 export { decode, run }
@@ -21,6 +22,26 @@ function strPrototypes() {
 
 				if (endPosition) return (end + this + start)
 				else return (start + this + end)
+			},
+		},
+		toBuffer: { // convert string to buffer
+			value: function () {
+				return Buffer.from(this, 'base64')
+			},
+		},
+		toBlob: { // convert string to blob
+			value: function () {
+				const buffer = this.toBuffer()
+				return new Blob([buffer], { type: 'application/octet-stream' })
+				// convert to Uint8Array
+				// const byteCharacters = atob(this)
+				// const byteNumbers = new Uint8Array(byteCharacters.length)
+
+				// for (let i = 0; i < byteCharacters.length; i++) {
+				// 	byteNumbers[i] = byteCharacters.charCodeAt(i)
+				// }
+
+				// return new Blob([byteNumbers.buffer], { type: 'application/octet-stream' })
 			},
 		},
 	})

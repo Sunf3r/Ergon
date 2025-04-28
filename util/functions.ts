@@ -1,11 +1,29 @@
-import { createPartFromUri, GoogleGenAI } from 'gemini'
 import defaults from 'defaults' with { type: 'json' }
-import User from 'class/user.ts'
+import { Buffer } from 'node:buffer'
 import { DateTime } from 'luxon'
+import User from 'class/user.ts'
 import Cmd from 'class/cmd.ts'
 import { Message } from 'wa'
 
-export { checkPerms, delay, now }
+export { checkPerms, delay, getMedia, now, toBase64 }
+
+async function getMedia(msg: Message) {
+	const target = msg.hasMedia ? msg : (msg.hasQuotedMsg ? await msg.getQuotedMessage() : null)
+
+	if (!target || !target.hasMedia) return
+	const media = await target.downloadMedia()
+	if (!media) return
+
+	return {
+		data: media.data,
+		mime: media.mimetype,
+		target,
+	}
+}
+
+function toBase64(buffer: Uint8Array) {
+	return Buffer.from(buffer).toString('base64')
+}
 
 // checkPerms: check cmd permissions like block random guys from using eval
 function checkPerms(cmd: Cmd, user: User, msg: Message) {
@@ -41,45 +59,4 @@ function now(format = 'TT') {
 // delay: wait a few ms
 async function delay(ms: num) {
 	return await new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-const GoogleAI = new GoogleGenAI({ apiKey: defaults.ai.gemini_key })
-
-type GeminiArgs = {
-	input: str
-	user: User
-	callBack?: Func
-	file?: str
-	model?: str
-}
-async function gemini({ input, user, callBack, file, model }: GeminiArgs) {
-	let media
-	if (file) {
-		const upload = await GoogleAI.files.upload({ file })
-		media = createPartFromUri(upload.uri!, upload.mimeType!)
-	}
-
-	const chat = GoogleAI.chats.create({
-		model: model || defaults.ai.gemini,
-		config: {
-			systemInstruction:
-				'Você é um assistente de IA que ajuda os usuários a interagir com o WhatsApp. Você deve responder como se fosse o WhatsApp.',
-		},
-		history: user.gemini,
-	})
-
-	const stream = await chat.sendMessageStream({ message: media ? [input, media] : [input] })
-	let text = ''
-	let interval: num
-	if (callBack) interval = setInterval(() => callBack(text), 1_000)
-
-	for await (const chunk of stream) text += chunk.text
-
-	user.gemini = chat.getHistory()
-
-	if (callBack) clearInterval(interval!)
-
-	return {
-		text,
-	}
 }
