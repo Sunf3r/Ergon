@@ -6,7 +6,6 @@ type Func = (...args: any[]) => any
 
 interface String {
 	align(limit: num, char?: str, endPosition?: bool): str
-	toBuffer(): Buf
 	toBlob(): Blob
 }
 

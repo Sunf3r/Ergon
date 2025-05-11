@@ -4,3 +4,4 @@ session*
 *.lock
 .*
 defaults.json
+conf/temp/*

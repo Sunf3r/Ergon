@@ -24,14 +24,9 @@ function strPrototypes() {
 				else return (start + this + end)
 			},
 		},
-		toBuffer: { // convert string to buffer
-			value: function () {
-				return Buffer.from(this, 'base64')
-			},
-		},
 		toBlob: { // convert string to blob
 			value: function () {
-				const buffer = this.toBuffer()
+				const buffer = Buffer.from(this, 'base64')
 				return new Blob([buffer], { type: 'application/octet-stream' })
 				// convert to Uint8Array
 				// const byteCharacters = atob(this)
@@ -106,10 +101,9 @@ function print(...args: any) {
 	)
 }
 
-async function run(cmd: str, time?: num, callBack?: Func, args?: any[]) {
-	const splited = cmd.split(' ')
-	const proc = new Deno.Command(splited[0], {
-		args: splited.slice(1),
+async function run(args: str[], time?: num, callBack?: Func, cbArgs?: any[]) {
+	const proc = new Deno.Command(args[0], {
+		args: args.slice(1),
 		stdout: 'piped', // catch output
 		stderr: 'piped', // catch error
 	})
@@ -118,7 +112,7 @@ async function run(cmd: str, time?: num, callBack?: Func, args?: any[]) {
 	let text = ''
 	let interval
 
-	if (callBack) interval = setInterval(async () => await callBack(...args!, text), time || 500)
+	if (callBack) interval = setInterval(async () => await callBack(...cbArgs!, text), time || 500)
 
 	for await (const line of cp.stdout) text += decode(line)
 	for await (const line of cp.stderr) text += decode(line)

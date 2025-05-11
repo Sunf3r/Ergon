@@ -19,7 +19,11 @@ export default class extends Cmd {
 		const statusMsg = { msg: {} } as { msg: Message }
 
 		const startTime = Date.now()
-		const output = await run(args.join(' '), 1_500, sendOrEdit, [bot, statusMsg!, msg.to])
+		const output = await run(args, 1_500, sendOrEdit, [
+			bot,
+			statusMsg!,
+			msg.to,
+		])
 
 		const duration = (Date.now() - startTime).duration(true)
 		const RAM = Deno.memoryUsage().rss.bytes() // current RAM usage
