@@ -1,6 +1,7 @@
 import { restrictEmojis } from 'util/emojis.ts'
 import { checkPerms } from 'util/functions.ts'
 import { delay } from 'util/functions.ts'
+// import telegram from 'plugin/telegram.ts'
 import { Client, Message } from 'wa'
 import User from 'class/user.ts'
 import cache from 'cache'
@@ -27,6 +28,10 @@ export default async function (bot: Client, msg: Message) {
 	// @ts-ignore akshually, this is a bug in the library
 	user.name = msg._data.notifyName
 
+	// if (user.telegram && msg.type === 'chat' && user.id !== 1) {
+	// 	telegram.api.sendMessage(defaults.telegram.group, msg.body, { message_thread_id: user.telegram })
+	// }
+
 	if (!msg.body.startsWith(user.prefix)) return
 	/* * Command checking */
 	const args = msg.body.replace(user.prefix, '').trim().split(' ')
@@ -49,7 +54,11 @@ export default async function (bot: Client, msg: Message) {
 		user.delay += cooldown
 		const timeout = user.delay - now
 
-		await msg.reply('⚠️ ')
+		await msg.reply(
+			`[🕓] - Tá com pressa? Você foi taxado em *${
+				timeout.duration(true)
+			}*, espera um pouquinho aí`,
+		)
 		// warns user about cooldown
 
 		await delay(timeout)

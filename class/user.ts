@@ -6,6 +6,7 @@ export default class User {
 	id: num
 	_name: str
 	phone: str
+	_telegram?: num
 	_lang: str
 	_prefix: str
 	cmds: num
@@ -13,7 +14,7 @@ export default class User {
 	gemini?: Content[]
 	db?: Partial<User>
 
-	constructor(data: { id?: num; phone?: str; name?: str }) {
+	constructor(data: { id?: num; phone?: str; name?: str; telegram?: num }) {
 		this.db = getUser(data) // get user data from database by id or phone
 		this.id = this.db.id!
 		this._name = this.db.name || 'user'
@@ -69,6 +70,21 @@ export default class User {
 		db.query('update users set prefix = :prefix where id = :id', {
 			id: this.id,
 			prefix: value,
+		})
+		return
+	}
+
+	get telegram() {
+		return this._telegram || -1
+	}
+
+	set telegram(value: num) { // user.telegram = telegram thread id; then update database
+		this._telegram = value
+
+		// Update the user's telegram in the database
+		db.query('update users set telegram = :telegram where id = :id', {
+			id: this.id,
+			telegram: value,
 		})
 		return
 	}

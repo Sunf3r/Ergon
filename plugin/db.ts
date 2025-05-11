@@ -5,12 +5,13 @@ const db = new DB('conf/sqlite.db')
 // Create database tables
 db.execute(`
 CREATE TABLE IF NOT EXISTS users (
-    id      INTEGER PRIMARY KEY AUTOINCREMENT,
-    name    TEXT,
-    phone   TEXT UNIQUE NOT NULL,
-    lang    TEXT,
-    prefix  TEXT,
-    cmds    INTEGER DEFAULT 0
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT,
+    phone       TEXT UNIQUE NOT NULL,
+    telegram    INTEGER UNIQUE,
+    lang        TEXT,
+    prefix      TEXT,
+    cmds        INTEGER DEFAULT 0
 );
 CREATE TABLE IF NOT EXISTS msgs (
     author  INTEGER,
@@ -32,8 +33,8 @@ CREATE TABLE IF NOT EXISTS reminders (
 export default db
 export { createUser, getUser }
 
-type User = { id?: num; name?: str; phone?: str; lang?: str; prefix?: str }
-function createUser(user: User) {
+type UserSchema = { id?: num; name?: str; phone?: str; telegram?: num; lang?: str; prefix?: str }
+function createUser(user: UserSchema) {
 	db.query(
 		`
     INSERT INTO users (name, phone, lang, prefix)
@@ -43,7 +44,7 @@ function createUser(user: User) {
 	return
 }
 
-function getUser(user: User): User {
+function getUser(user: UserSchema): UserSchema {
 	let data
 	if (user.phone) {
 		user.phone = user.phone.split(':')[0].split('@')[0]
@@ -53,7 +54,14 @@ function getUser(user: User): User {
 			createUser(user)
 			data = getUser(user)
 		}
-	} else data = db.queryEntries('SELECT * FROM users WHERE id = :id;', { id: user.id })[0]
+	} else if (user.id) {
+		data = db.queryEntries('SELECT * FROM users WHERE id = :id;', { id: user.id })[0]
+	} else if (user.telegram) {
+		data = db.queryEntries('SELECT * FROM users WHERE name = :name OR telegram = :telegram;', {
+			name: user.name,
+			telegram: user.telegram,
+		})[0]
+	}
 
-	return data
+	return data!
 }

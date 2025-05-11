@@ -5,7 +5,7 @@ import { inspect } from 'node:util'
 import cache from 'util/cache.ts'
 import { CmdCtx } from 'types'
 import Cmd from 'class/cmd.ts'
-import db from 'plugin/db.ts'
+import db, { getUser } from 'plugin/db.ts'
 
 export default class extends Cmd {
 	constructor() {
@@ -20,6 +20,7 @@ export default class extends Cmd {
 
 	async run({ bot, msg, args, user }: CmdCtx) {
 		defaults
+		getUser
 		cache
 		delay
 		now
