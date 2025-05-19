@@ -18,6 +18,7 @@
 		"defaults": "./conf/defaults.json",
 		"cache": "./util/cache.ts",
 		"db": "./plugin/db.ts",
+		"main": "./wa.ts",
 		// folders
 		"plugin/": "./plugin/",
 		"class/": "./class/",

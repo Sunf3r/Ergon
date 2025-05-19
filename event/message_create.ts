@@ -2,11 +2,11 @@ import { restrictEmojis } from 'util/emojis.ts'
 import { checkPerms } from 'util/functions.ts'
 import { delay } from 'util/functions.ts'
 // import telegram from 'plugin/telegram.ts'
-import { Client, Message } from 'wa'
 import User from 'class/user.ts'
+import { Message } from 'wa'
 import cache from 'cache'
 
-export default async function (bot: Client, msg: Message) {
+export default async function (msg: Message) {
 	// console.info(
 	// 	'author/from/to/remote/type',
 	// 	msg.author,
@@ -32,15 +32,21 @@ export default async function (bot: Client, msg: Message) {
 	// 	telegram.api.sendMessage(defaults.telegram.group, msg.body, { message_thread_id: user.telegram })
 	// }
 
-	if (!msg.body.startsWith(user.prefix)) return
+	// if (msg.hasQuotedMsg) {
+	// 	const quoted = await msg.getQuotedMessage()
+	// 	console.log(quoted.deviceType)
+	// }
+	if (!msg.body.startsWith(user.prefix)) return // ignore messages that don't start with the prefix
 	/* * Command checking */
-	const args = msg.body.replace(user.prefix, '').trim().split(' ')
-	const shift = args.shift()?.toLowerCase()
+	const args = msg.body.replace(user.prefix, '').trim().split(' ') // cmd argments
+	const shift = args.shift()?.toLowerCase() // cmd name
+
 	if (!shift) return
 	const cmd = cache.cmds.find((c) => c.name === shift || c.alias.includes(shift))
-
+	// finding the command in the cache
 	if (!cmd) return
 	msg.to = msg.id.remote
+	// small lib bug fix to make the bot send messages to the right chat
 
 	/* * Permissions checking */
 	const auth = checkPerms(cmd, user, msg)
@@ -67,6 +73,6 @@ export default async function (bot: Client, msg: Message) {
 
 	user.addCmd() // 1+ on user personal cmds count
 
-	cmd.run({ bot, msg, args, user })
+	cmd.run({ msg, args, user })
 		.catch((e: any) => msg.reply(`Erro: ${e.message || e}`) ?? console.error(e))
 }

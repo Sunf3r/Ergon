@@ -1,16 +1,16 @@
 // deno-lint-ignore-file no-unused-vars
 import defaults from 'defaults' with { type: 'json' }
 import { delay, now } from 'util/functions.ts'
+import db, { getUser } from 'plugin/db.ts'
 import { inspect } from 'node:util'
 import cache from 'util/cache.ts'
 import { CmdCtx } from 'types'
 import Cmd from 'class/cmd.ts'
-import db, { getUser } from 'plugin/db.ts'
+import bot from 'main'
 
 export default class extends Cmd {
 	constructor() {
 		super({
-			name: 'eval',
 			alias: ['e'],
 			access: {
 				restrict: true,
@@ -18,7 +18,7 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, args, user }: CmdCtx) {
+	async run({ msg, args, user }: CmdCtx) {
 		defaults
 		getUser
 		cache

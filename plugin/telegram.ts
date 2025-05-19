@@ -1,3 +1,6 @@
+// not a priority right now
+// temporarily disabled
+
 import defaults from 'defaults' with { type: 'json' }
 import User from 'class/user.ts'
 import { Bot } from 'grammy'
