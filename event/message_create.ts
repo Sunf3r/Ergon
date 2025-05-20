@@ -1,4 +1,4 @@
-import { react, send } from 'util/message.ts'
+import { react, send, startTyping } from 'util/message.ts'
 // import telegram from 'plugin/telegram.ts'
 import { delay } from 'util/functions.ts'
 import User from 'class/user.ts'
@@ -73,6 +73,16 @@ export default async function (msg: Message) {
 
 	user.addCmd() // 1+ on user personal cmds count
 
-	cmd.run({ msg, args, user, send: send.bind(msg.to), react: reactOnMsg })
+	const chat = await msg.getChat()
+
+	cmd.run({
+		msg,
+		args,
+		user,
+		send: send.bind(msg.to),
+		react: reactOnMsg,
+		chat,
+		startTyping: startTyping.bind(chat),
+	})
 		.catch((e: any) => msg.reply(`Erro: ${e.message || e}`) ?? console.error(e))
 }

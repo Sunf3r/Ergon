@@ -13,7 +13,7 @@ export default class extends Cmd {
 			subCmds: ['reset', 'pro'],
 		})
 	}
-	async run({ msg, args, user, send, react }: CmdCtx) {
+	async run({ msg, args, user, send, react, startTyping }: CmdCtx) {
 		if (!args[0]) return send('Por favor escreva um prompt')
 		const model = defaults.ai.gemini25 // default gemini model
 
@@ -29,11 +29,12 @@ export default class extends Cmd {
 		// 	args.shift()
 		// }
 
-		const file = await getMedia(msg) // download msg media or quoted msg media
+		const file = await getMedia(msg, startTyping) // download msg media or quoted msg media
 
 		const streamMsg = { // Workaround to make the variable always point to
 			msg: {}, // this memory space
 		} as { msg: Message }
+		await startTyping()
 		await gemini({
 			model,
 			input: args.join(' '),
@@ -43,7 +44,6 @@ export default class extends Cmd {
 			callBack: sendOrEdit, // edit msg while gemini writes it
 			args: [streamMsg!, msg.to], // arguments to pass to the callback
 		})
-			.then(() => react('think'))
 			.catch(async (e) => {
 				console.log('GEMINI', e, 'red')
 				await gemini({
@@ -55,8 +55,8 @@ export default class extends Cmd {
 					callBack: sendOrEdit, // edit msg while gemini writes it
 					args: [streamMsg!, msg.to], // arguments to pass to the callback
 				})
-					.then(() => react('think'))
 			})
+		react('think')
 		return
 	}
 }

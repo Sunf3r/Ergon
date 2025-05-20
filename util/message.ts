@@ -1,15 +1,16 @@
-import { Message, MessageMedia, MessageSendOptions } from 'wa'
+import { Chat, Message, MessageMedia, MessageSendOptions } from 'wa'
 import emojis from './emojis.ts'
 import bot from 'main'
 
-export { getMedia, react, send, sendOrEdit }
+export { getMedia, react, send, sendOrEdit, startTyping }
 
 // download media from message or quoted message
 // if there's no media, return undefined
-async function getMedia(msg: Message) {
+async function getMedia(msg: Message, startTyping?: Func, sendRecording: bool = false) {
 	const target = msg.hasMedia ? msg : (msg.hasQuotedMsg ? await msg.getQuotedMessage() : null)
 
 	if (!target || !target.hasMedia) return
+	if (startTyping) await startTyping(sendRecording)
 	const media = await target.downloadMedia()
 	if (!media) return
 
@@ -38,4 +39,8 @@ async function sendOrEdit(data: { msg: Message }, chat: str, text: str) {
 	if (data.msg?.id) {
 		await data.msg.edit(text).catch((e) => console.log('Failed to edit message', e))
 	} else data.msg = await send.bind(chat)(text)
+}
+
+async function startTyping(this: Chat, sendRecording?: bool) {
+	return await (sendRecording ? this.sendStateRecording() : this.sendStateTyping())
 }

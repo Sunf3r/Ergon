@@ -40,5 +40,4 @@ type Reminder = {
 	status: num
 }
 
-type AITokens = { total: num; thoughts: num }
-type AIMsg = { header: str; text: str }
+type AIMsg = { header: str; text: str; tokens: num; thoughts: num }
