@@ -15,7 +15,7 @@ export default class extends Cmd {
 	}
 	async run({ msg, args, user, send, react }: CmdCtx) {
 		if (!args[0]) return send('Por favor escreva um prompt')
-		let model = defaults.ai.gemini // default gemini model
+		const model = defaults.ai.gemini25 // default gemini model
 
 		if (args[0] === this.subCmds[0]) { // reset
 			user.gemini = []
@@ -23,11 +23,11 @@ export default class extends Cmd {
 			args.shift()
 		}
 
-		if (args[0] === this.subCmds[1]) { // use pro model
-			if (!args[1]) return send('Por favor escreva um prompt')
-			model = defaults.ai.gemini25 // gemini 2.5 flash preview
-			args.shift()
-		}
+		// if (args[0] === this.subCmds[1]) { // use pro model
+		// 	if (!args[1]) return send('Por favor escreva um prompt')
+		// 	model = defaults.ai.gemini25 // gemini 2.5 flash preview
+		// 	args.shift()
+		// }
 
 		const file = await getMedia(msg) // download msg media or quoted msg media
 
@@ -44,9 +44,18 @@ export default class extends Cmd {
 			args: [streamMsg!, msg.to], // arguments to pass to the callback
 		})
 			.then(() => react('think'))
-			.catch((e) => {
-				console.log('CMD/GEMINI', e.stack, 'red')
-				send(String(e.message || e))
+			.catch(async (e) => {
+				console.log('GEMINI', e, 'red')
+				await gemini({
+					model: defaults.ai.gemini2,
+					input: args.join(' '),
+					user,
+					chat: msg.to, // this chat id
+					file,
+					callBack: sendOrEdit, // edit msg while gemini writes it
+					args: [streamMsg!, msg.to], // arguments to pass to the callback
+				})
+					.then(() => react('think'))
 			})
 		return
 	}

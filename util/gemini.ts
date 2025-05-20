@@ -26,14 +26,18 @@ export default async function gemini(
 	})
 
 	let stream
+	let title = 'Gemini'
 	const message = upload ? [createPartFromUri(upload.uri!, upload.mimeType!), input] : input
-	if (model.includes('2.0')) stream = await gemini.sendMessage({ message })
-	else stream = await gemini.sendMessageStream({ message })
+	if (model.includes('2.0')) {
+		stream = await gemini.sendMessage({ message })
+		title = 'gemini'
+	} else stream = await gemini.sendMessageStream({ message })
 
 	const tokens = {
 		total: -1,
 		thoughts: 0,
 	}
+	msg.header = ''
 	// @ts-ignore i don't have another way to check this
 	if (!stream.text) {
 		stream = stream as AsyncGenerator<GenerateContentResponse>
@@ -44,7 +48,7 @@ export default async function gemini(
 	}
 
 	msg.header =
-		`- *Gemini (Tokens: ${tokens.total} ${
+		`- *${title} (Tokens: ${tokens.total} ${
 			tokens.thoughts ? `| Raciocínio: ${tokens.thoughts}` : ''
 		})*\n` +
 		msg.header
