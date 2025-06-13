@@ -6,7 +6,7 @@
 const node_args = [
 	'--expose-gc',
 	'--no-warnings',
-	'--env-file=settings/.env',
+	'--env-file=conf/.env',
 ]
 
 module.exports = { // yea, i really need to use module.exports. don't rage!
