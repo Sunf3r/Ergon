@@ -1,4 +1,5 @@
 import { Cmd, CmdCtx, defaults, gemini } from '../../map.js'
+import { getMedia } from '../../util/messages.js'
 
 export default class extends Cmd {
 	constructor() {
@@ -9,13 +10,13 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, args, user, sendUsage }: CmdCtx) {
+	async run({ bot, msg, args, react, user, send, sendUsage }: CmdCtx) {
 		if (!args[0]) return sendUsage()
 		let model = defaults.ai.gemini // gemini flash model
 
 		if (args[0] === this.subCmds[1]) {
 			user.geminiCtx = [] // reset user ctx/conversation history
-			if (!args[1]) return bot.react(msg, 'ok')
+			if (!args[1]) return react('ok')
 			args.shift() // remove 'reset' from prompt
 		}
 
@@ -25,17 +26,14 @@ export default class extends Cmd {
 			args.shift() // remove 'pro' from prompt
 		}
 
-		await bot.react(msg, 'think')
-		let buffer, mime, stream: Promise<CmdCtx> | CmdCtx
+		let mime
 		const language = `langs.${user.lang}`.t('en')
 		const instruction = // dynamic initial instruction
 			`You are a member of a WhatsApp group. Always do as asked, respond in ${language} and use bold for all important words and keywords`
 
-		if (msg.isMedia || msg?.quoted?.isMedia) {
-			const target = msg.isMedia ? msg : msg.quoted // include msg or quoted msg media
-
-			buffer = await bot.downloadMedia(target)
-			mime = target.mime // media mimetype like image/png
+		const buffer = await getMedia(msg)
+		if (buffer) {
+			mime = (msg.isMedia ? msg : msg.quoted).mime // media mimetype like image/png
 		}
 
 		try {
@@ -48,12 +46,11 @@ export default class extends Cmd {
 				user,
 			})
 
-			await bot.send(msg.chat, ` - *${model}* (${data.tokens}):\n${data.text}`)
-			bot.react(msg, 'ok')
+			await send(` - *${model}* (${data.tokens}):\n${data.text}`)
+			react('sparkles')
 		} catch (e: any) {
 			console.error(e, 'CMD/GEMINI')
-			bot.react(msg, 'x')
-			bot.send(msg, e.message.encode())
+			send(e.message.encode())
 		}
 
 		return

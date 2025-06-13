@@ -1,3 +1,4 @@
+import { getMedia } from '../../util/messages.js'
 import { AnyMessageContent } from 'baileys'
 import { Cmd, CmdCtx } from '../../map.js'
 
@@ -8,32 +9,22 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ msg, args, group, user, bot, sendUsage, t }: CmdCtx) {
+	async run({ msg, send, react, sendUsage, t }: CmdCtx) {
 		if (!msg.isMedia && !msg.quoted?.isMedia) return sendUsage()
 
-		let target = msg.isMedia ? msg : msg.quoted // get msg or msg quoted media
-		let buffer = await bot.downloadMedia(target)
-			.catch((e) => {})
+		let buffer = await getMedia(msg)
 
-		if (!Buffer.isBuffer(buffer)) {
-			target = (group || user).msgs.get(target.key?.id)
-			buffer = await bot.downloadMedia(target)
-				.catch((e) => {})
+		if (!buffer || !Buffer.isBuffer(buffer)) return send(t('sticker.nobuffer'))
 
-			if (!Buffer.isBuffer(buffer)) return bot.send(msg, t('sticker.nobuffer'))
-		}
-
-		await bot.react(msg, 'loading')
+		await react('sparkles')
 		const msgObj = {
-			caption: target.text ? '`' + target.text + '`' : '',
+			caption: msg?.quoted?.text || '',
 		} as AnyMessageContent
 
 		// @ts-ignore send sticker as image
 		msgObj[target.type === 'sticker' ? 'image' : target.type] = buffer
 
-		await bot.send(msg, msgObj)
-
-		bot.react(msg, 'ok')
+		await send(msgObj)
 		return
 	}
 }

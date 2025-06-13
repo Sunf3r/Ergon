@@ -12,7 +12,7 @@ export default class extends Cmd {
 	}
 
 	async run(ctx: CmdCtx) {
-		const { args, bot, msg, user, group, cmd, t, sendUsage } = ctx
+		const { args, bot, msg, user, group, cmd, t, send, react, startTyping, sendUsage } = ctx
 		const langs = Object.keys(defaults.runner)
 		// all supported programming languages
 
@@ -20,7 +20,6 @@ export default class extends Cmd {
 		const lang: Lang = langs.includes(args[0]) ? args.shift() : 'eval'
 		const code = args.join(' ')
 		let output, startTime: num
-		// await bot.react(msg, 'loading')
 
 		if (lang === 'eval') {
 			let evaled // run on this thread
@@ -59,8 +58,7 @@ export default class extends Cmd {
 
 		const text = `\`$ ${duration}/${RAM}\`` + output
 
-		await bot.send(msg, text)
-		// bot.react(msg, 'ok')
+		await send(text)
 		return
 	}
 }

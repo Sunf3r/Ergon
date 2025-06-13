@@ -9,7 +9,7 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, args, sendUsage, t }: CmdCtx) {
+	async run({ args, send, sendUsage, t }: CmdCtx) {
 		if (!args[1]) return sendUsage()
 
 		const toLang = args.shift() // language to what the text will be translated
@@ -20,7 +20,7 @@ export default class extends Cmd {
 				`*${output?.from.language.iso}  ➟  ${toLang}*\n` + // lang identify
 				output?.text.encode() // translation
 
-			bot.send(msg, text)
+			send(text)
 		} catch (e) {
 			console.error(e, 'CMD/TRANSLATE')
 			sendUsage()

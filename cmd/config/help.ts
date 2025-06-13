@@ -1,4 +1,5 @@
 import { Cmd, CmdCtx } from '../../map.js'
+import cache from '../../plugin/cache.js'
 
 export default class extends Cmd {
 	constructor() {
@@ -7,8 +8,8 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ t, bot, args, msg, user }: CmdCtx) {
-		const cmdsList = bot.cache.cmds
+	async run({ t, args, send, react, user }: CmdCtx) {
+		const cmdsList = cache.cmds
 			.filter((c: Cmd) => !c.access.restrict) // ignore dev cmds
 			.sort((a, b) => a.name.localeCompare(b.name)) // sort by name
 			.map((c) => `➥ *${user.prefix}${c.name}*: ${t(`${c.name}.desc`)}`)
@@ -18,11 +19,11 @@ export default class extends Cmd {
 			cmdsList // cmds list
 
 		if (args[0]) { // send single cmd info
-			const c = bot.cache.cmds
+			const c = cache.cmds
 				.find((c) => c.name === args[0] || c.alias.includes(args[0]))
 			// search cmd by name or alias
 
-			if (!c) return await bot.react(msg, '❌') // cmd not found
+			if (!c) return await react('x') // cmd not found
 			const callCmd = `\n*${user.prefix + c.name}* ` // user prefix + cmd name
 			const aliases = c.alias[0] ? `[${c.alias.join(', ')}]` : '' // all aliases
 			const ex = t(`${c.name}.examples`) // all examples
@@ -38,7 +39,7 @@ export default class extends Cmd {
 				examples + `\n\n${t(`usage.args`)}` // examples + args types
 		}
 
-		bot.send(msg, text)
+		send(text)
 		return
 	}
 }

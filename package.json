@@ -1,7 +1,7 @@
 {
-	"module": "build/main.js",
+	"module": "build/wa.js",
 	"type": "module",
-	"exports": "./build/main.js",
+	"exports": "./build/wa.js",
 	"engines": {
 		"node": ">=22"
 	},
@@ -16,7 +16,7 @@
 		"postinstall": "rm package-lock.json & npm run prisma:gen && npm run build",
 		"build": "rm -r build/ & npx tsc",
 		"start": "npx pm2 start conf/ecosystem.config.cjs --attach",
-		"test": "node build/main.js",
+		"test": "node build/wa.js",
 		"stop": "npx pm2 delete all",
 		"prisma:push": "npx prisma db push --schema=conf/schema.prisma",
 		"prisma:gen": "npx prisma generate --schema=conf/schema.prisma",
@@ -30,7 +30,6 @@
 		"@prisma/client": "^6.9.0",
 		"baileys": "^6.7.18",
 		"chalk": "^5.4.1",
-		"express": "^4.21.2",
 		"google-sr": "^5.0.0",
 		"google-translate": "github:iamtraction/google-translate",
 		"googlethis": "^1.8.0",
@@ -44,13 +43,11 @@
 		"wa-sticker-formatter": "^4.4.4"
 	},
 	"devDependencies": {
-		"@types/express": "^5.0.3",
 		"@types/humanize-duration": "^3.27.4",
 		"@types/luxon": "^3.6.2",
-		"@types/node": "^22.15.30",
+		"@types/node": "^22.15.31",
 		"@types/qrcode": "^1.5.5",
 		"pino-pretty": "^13.0.0",
-		"prisma": "^6.9.0",
-		"typescript": "^5.8.3"
+		"prisma": "^6.9.0"
 	}
 }

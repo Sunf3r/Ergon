@@ -13,7 +13,16 @@ const now = (format = 'TT') =>
 		.setLocale(defaults.lang)
 		.toFormat(format) // TT = HOURS:MINITES:SECONDS
 
-export { now }
+// Pino Logger
+const logger = pino.default({
+	level: 'error',
+	transport: {
+		target: 'pino-pretty',
+		options: { ignore: 'pid,hostname' },
+	},
+})
+
+export { logger, now }
 
 export default () => {
 	/* String Prototypes */
@@ -198,15 +207,7 @@ export default () => {
 		return
 	}
 
-	// Pino Logger
-	const logger = pino.default({
-		level: 'error',
-		transport: {
-			target: 'pino-pretty',
-			options: { ignore: 'pid,hostname' },
-		},
-	})
-	return logger
+	return
 }
 
 function fmtLog(title: str, msg: str, color: str) {

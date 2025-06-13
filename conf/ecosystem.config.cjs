@@ -12,7 +12,7 @@ const node_args = [
 module.exports = { // yea, i really need to use module.exports. don't rage!
 	apps: [{ // pm2 launch settings
 		name: 'wa',
-		script: 'build/main.js', /// main file
+		script: 'build/wa.js', /// main file
 		node_args,
 		out_file: 'conf/log/out', // only output log
 		error_file: 'conf/log/err', // only error log

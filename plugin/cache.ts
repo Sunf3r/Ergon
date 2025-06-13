@@ -5,13 +5,13 @@
  * Cache saved on setings/cache/*.json
  */
 
-import { Baileys, Cmd, Collection, Group, User } from '../map.js'
-import { mkdir, readFile, writeFile } from 'fs/promises'
+import { mkdir, readFile, unlink, writeFile } from 'fs/promises'
+import { Cmd, Collection, Group, User } from '../map.js'
 import { existsSync } from 'fs'
 
 const cachedData = ['users', 'groups']
 
-export default class CacheManager {
+class CacheManager {
 	// Collections (Stored data)
 	cmds: Collection<str, Cmd>
 	wait: Collection<str, Func>
@@ -20,8 +20,7 @@ export default class CacheManager {
 	groups: Collection<str, Group>
 	timeouts: Collection<str, NodeJS.Timeout>
 
-	constructor(public bot: Baileys) {
-		this.bot = bot
+	constructor() {
 		// wait: arbitrary functions that can be called on events
 		this.wait = new Collection(0)
 		// Events collection (0 means no limit)
@@ -34,11 +33,6 @@ export default class CacheManager {
 		this.groups = new Collection(500, Group)
 		// Timeouts
 		this.timeouts = new Collection(0)
-	}
-
-	start() {
-		this.resume()
-		setInterval(() => this.save(), 60_000)
 	}
 
 	async save() {
@@ -54,6 +48,15 @@ export default class CacheManager {
 
 	async resume() {
 		for (const category of cachedData) {
+			// if --rm-cache is passed, remove cache files
+			if (process.argv.includes('--rm-cache')) {
+				await unlink(`conf/cache/${category}.json`)
+				// remove cache files
+
+				print('CACHE', `No ${category} cache`, 'blue')
+				continue
+			}
+
 			const cache = await readFile(`conf/cache/${category}.json`, { encoding: 'utf8' })
 				.catch(() => {})
 			// read file
@@ -78,3 +81,7 @@ export default class CacheManager {
 		return
 	}
 }
+
+const cache = new CacheManager()
+cache.resume()
+export default cache

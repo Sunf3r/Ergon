@@ -1,7 +1,7 @@
-import { Baileys, Cmd, Group, User } from '../../map.ts'
+import { Baileys, Cmd, emojis, Group, User } from '../../map.ts'
 import { ChatSession } from '@google/generative-ai'
 import { TFunction } from 'i18next'
-import { proto } from 'baileys'
+import { AnyMessageContent, proto } from 'baileys'
 import pino, { LoggerExtras, LoggerOptions } from 'pino'
 
 type Logger<Options = LoggerOptions> =
@@ -64,6 +64,10 @@ interface CmdCtx {
 	bot: Baileys
 	args: str[]
 	cmd: Cmd
+	startTyping(): Promise<void>
+	send(str: str | AnyMessageContent): Promise<CmdCtx>
+	react(emoji: str | ReturnType<typeof emojis>): Promise<void>
+	deleteMsg(): Promise<void>
 	t: TFunction<'translation', undefined>
 	sendUsage(): Promise<void>
 }

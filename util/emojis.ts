@@ -1,6 +1,6 @@
 /** Emoji names list
  * it will be used to find emojis by name
- * bot.react(msg, 'ok') => bot.react(msg, '✅')
+ * react('ok') => react('✅')
  */
 
 export default {
@@ -9,6 +9,7 @@ export default {
 	loading: '⌛',
 	block: '⛔',
 	think: '💭',
+	thinking: '🤔',
 	lamp: '💡',
 	clock: '🕓',
 	nodb: '📂',

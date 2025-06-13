@@ -13,6 +13,7 @@ import {
 	User,
 } from '../map.js'
 import type { AnyMessageContent, proto } from 'baileys'
+import cache from '../plugin/cache.js'
 
 // getCtx: command context === message abstraction layer
 async function getCtx(raw: proto.IWebMessageInfo, bot: Baileys): Promise<CmdCtx> {
@@ -53,7 +54,7 @@ async function getCtx(raw: proto.IWebMessageInfo, bot: Baileys): Promise<CmdCtx>
 	let cmd
 	if (user) {
 		if (pushName && pushName !== user.name) user.name = pushName
-		const input = getInput(msg, bot, user.prefix) // ignores non-prefixed msgs
+		const input = getInput(msg, user.prefix) // ignores non-prefixed msgs
 		msg.text = input.msg.text // it may change msg.text by msg.quoted.text
 		// so when someone asks something
 		// you can reply it with `.g` and search it
@@ -89,12 +90,12 @@ function getDownloadableData(raw: any, types: [MsgTypes, str], isMediaMsg: bool)
 }
 
 // getInput: get cmd, args and ignore non-prefixed msgs
-function getInput(msg: Msg, bot: Baileys, prefix: str) {
+function getInput(msg: Msg, prefix: str) {
 	if (!msg.text.startsWith(prefix)) return { msg, args: [] } // does not returns cmd bc it does not exist
 
 	let args: str[] = msg.text.replace(prefix, '').trim().split(' ')
 	const callCmd = args.shift()!.toLowerCase() // cmd name on msg | .help => 'help' === callCmd
-	const cmd = bot.cache.cmds
+	const cmd = cache.cmds
 		.find((c) => c.name === callCmd || c.alias.includes(callCmd))
 	// search command by name or by aliases
 

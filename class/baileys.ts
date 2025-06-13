@@ -1,10 +1,7 @@
-import { CacheManager, Cmd, emojis, getCtx, Group, Logger, Msg, msgMeta, User } from '../map.js'
-import baileys, {
-	type AnyMessageContent,
+import { Cmd, Group, User } from '../map.js'
+import {
 	type BaileysEventMap,
 	Browsers,
-	downloadMediaMessage,
-	// fetchLatestBaileysVersion,
 	makeCacheableSignalKeyStore,
 	makeWASocket,
 	useMultiFileAuthState,
@@ -12,18 +9,16 @@ import baileys, {
 } from 'baileys'
 import { readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { logger } from '../util/proto.js'
+import cache from '../plugin/cache.js'
 
 export default class Baileys {
 	sock!: WASocket
 
 	// Cache (Stored data)
-	cache: CacheManager
 
-	constructor(public auth: str, public logger: Logger) {
+	constructor(public auth: str) {
 		this.auth = auth // auth folder
-		this.logger = logger
-
-		this.cache = new CacheManager(this)
 	}
 
 	async connect() {
@@ -42,13 +37,14 @@ export default class Baileys {
 			auth: {
 				creds: state.creds,
 				// cache makes the store send/receive msgs faster
-				keys: makeCacheableSignalKeyStore(state.keys, this.logger),
+				keys: makeCacheableSignalKeyStore(state.keys, logger),
 			},
-			logger: this.logger,
+			logger,
 			version,
-			syncFullHistory: false,
 			markOnlineOnConnect: false,
 			browser: Browsers.macOS('Desktop'),
+			syncFullHistory: false,
+			shouldSyncHistoryMessage: () => false,
 			// ignore status updates
 			shouldIgnoreJid: (jid: str) =>
 				jid?.includes('broadcast') || jid?.includes('newsletter') ||
@@ -65,67 +61,27 @@ export default class Baileys {
 
 		// Load events
 		await this.folderHandler(`./build/event`, this.loadEvents)
-
-		this.cache.start()
 		return
-	}
-
-	// Send: Intermediate function to send msgs easier
-	async send(
-		id: str | Msg,
-		body: str | AnyMessageContent,
-		reply?: baileys.proto.IWebMessageInfo,
-	) {
-		let { text, chat, quote: _q } = msgMeta(id, body, reply)
-		// get msg metadata
-
-		const msg = await this.sock.sendMessage(chat, text) //, quote)
-
-		// convert raw msg on cmd context
-		return await getCtx(msg!, this)
-	}
-
-	// React: react on a msg
-	async react(m: Msg, emoji: str) {
-		const { chat, key } = m
-
-		// @ts-ignore find emojis by name | 'ok' => '✅'
-		const text = emojis[emoji] || emoji
-		await this.send(chat, { react: { text, key } })
-		return
-	}
-
-	async editMsg(msg: Msg, text: str) {
-		const { chat, key } = msg
-
-		return await this.send(chat, { edit: key, text })
-	}
-
-	async deleteMsg(msgOrKey: Msg | baileys.proto.IMessageKey) {
-		const { chat, key } = msgMeta(msgOrKey, '')
-		// get msg metadata
-
-		return await this.send(chat, { delete: key })
 	}
 
 	async getUser({ id, phone }: { id?: num; phone?: str }): Promise<User | undefined> {
 		let user
 
 		if (id) { // means user is already on db
-			const cache = this.cache.users.get(id)
+			const data = cache.users.get(id)
 
-			if (cache) return cache
+			if (data) return data
 			user = await new User({ id }).checkData()
-			this.cache.users.add(id, user)
+			cache.users.add(id, user)
 		} else {
 			const number = phone!.parsePhone()
-			const cache = this.cache.users.find((u) => u.phone === number)
+			const data = cache.users.find((u) => u.phone === number)
 
-			if (cache) return cache
+			if (data) return data
 			user = await new User({ phone }).checkData()
 			if (!user) return
 			if (!process.env.DATABASE_URL) user.id = Number(user.phone)
-			this.cache.users.add(user.id, user)
+			cache.users.add(user.id, user)
 		}
 
 		return user
@@ -133,7 +89,7 @@ export default class Baileys {
 
 	// get a group cache or fetch it
 	async getGroup(id: str): Promise<Group> {
-		let group = this.cache.groups.get(id) // cache
+		let group = cache.groups.get(id) // cache
 
 		if (group) return group
 		else {
@@ -141,18 +97,9 @@ export default class Baileys {
 			group = await this.sock.groupMetadata(id)
 
 			group = await new Group(group).checkData(this)
-			this.cache.groups.add(group.id, group)
+			cache.groups.add(group.id, group)
 			return group
 		}
-	}
-
-	async downloadMedia(msg: Msg) {
-		const media = await downloadMediaMessage(msg, 'buffer', {}, {
-			logger: this.logger,
-			reuploadRequest: this.sock.updateMediaMessage,
-		})! as Buf
-
-		return media || await this.sock.updateMediaMessage(msg)
 	}
 
 	async folderHandler(path: str, handler: Func) {
@@ -183,7 +130,7 @@ export default class Baileys {
 		const cmd: Cmd = new imported()
 		cmd.name = file.slice(0, -3) // remove .ts
 
-		this.cache.cmds.add(cmd.name!, cmd)
+		cache.cmds.add(cmd.name!, cmd)
 		// Set cmd
 	}
 
@@ -191,12 +138,12 @@ export default class Baileys {
 		const event = imported
 		const name = `${category}.${file.slice(0, -3)}`
 		// folder+file names are the same of lib events
-		this.cache.events.set(name, event)
+		cache.events.set(name, event)
 
 		// Listen to the event here
 		this.sock.ev.on(name as keyof BaileysEventMap, (...args) => {
 			// It allows to modify events in run time
-			this.cache.events.get(name)!(this, ...args, name)
+			cache.events.get(name)!(this, ...args, name)
 				.catch((e: Error) => console.error(e, `EVENT/${name}:`))
 			// eventFunction(this, ...args, name);
 		})

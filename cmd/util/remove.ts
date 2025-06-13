@@ -1,4 +1,5 @@
 import { Cmd, CmdCtx, emojis, isVisual, makeTempFile, runCode } from '../../map.js'
+import { getMedia } from '../../util/messages.js'
 import { readFile } from 'fs/promises'
 
 export default class extends Cmd {
@@ -9,15 +10,13 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, sendUsage, t }: CmdCtx) {
+	async run({ msg, react, send, sendUsage, t }: CmdCtx) {
 		if (!isVisual(msg.type) && !isVisual(msg.quoted?.type)) return sendUsage()
 
-		let target = isVisual(msg.type) ? msg : msg.quoted
-		// choose between msg media or quoted msg media
-		let buffer = await bot.downloadMedia(target)
+		let buffer = await getMedia(msg)
 
-		if (!Buffer.isBuffer(buffer)) return bot.send(msg, t('sticker.nobuffer'))
-		await bot.react(msg, 'loading')
+		if (!buffer || !Buffer.isBuffer(buffer)) return send(t('sticker.nobuffer'))
+		await react('loading')
 
 		const file = await makeTempFile(buffer, 'rmbg_', '.webp')
 		// create temporary file
@@ -29,8 +28,8 @@ export default class extends Cmd {
 		buffer = await readFile(`${file}.png`) || buffer
 		// read new file
 
-		await bot.send(msg.chat, { caption: emojis['sparkles'], image: buffer })
-		bot.react(msg, 'ok')
+		await send({ caption: emojis['sparkles'], image: buffer })
+		react('ok')
 		return
 	}
 }

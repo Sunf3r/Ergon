@@ -11,7 +11,7 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, group, t }: CmdCtx) {
+	async run({ bot, send, group, t }: CmdCtx) {
 		let text = `*[🏆] - Rank*\n\n`
 
 		const msgs = await group!.getCountedMsgs()
@@ -28,7 +28,7 @@ export default class extends Cmd {
 			})
 		}
 
-		bot.send(msg, text)
+		send(text)
 		return
 	}
 }

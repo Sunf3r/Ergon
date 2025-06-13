@@ -40,6 +40,7 @@ const allMsgTypes = { // all msg types
 	'pinInChatMessage': 'pin',
 	'eventMessage': 'event', // group events
 	'protocolMessage': 'protocol', // delete msgs
+	'albumMessage': 'album', // contains multiple media msgs
 
 	// API Bots
 	'buttonsMessage': 'button',

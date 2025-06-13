@@ -1,6 +1,6 @@
-import { Baileys, defaults, Group, User } from '../map.js'
 import { mkdir, readdir, unlink, writeFile } from 'node:fs/promises'
-import { now } from './proto.js'
+import { Baileys, defaults, Group } from '../map.js'
+import cache from '../plugin/cache.js'
 
 export {
 	cacheAllGroups,
@@ -8,11 +8,10 @@ export {
 	delay,
 	findKey,
 	genRandomName,
-	genStickerMeta,
 	isEmpty,
 	isValidPositiveIntenger,
 	makeTempFile,
-	randomDelay
+	randomDelay,
 }
 
 async function randomDelay() {
@@ -34,23 +33,11 @@ async function cacheAllGroups(bot: Baileys) {
 	groups.forEach(async (g) => {
 		const group = await new Group(groupList[g]).checkData(bot)
 
-		bot.cache.groups.add(group.id, group)
+		cache.groups.add(group.id, group)
 	})
 
 	print('CACHE', `${groups.length} groups cached`, 'blue')
 	return
-}
-
-// genStickerMeta: Generate the author/pack for a sticker
-function genStickerMeta(user: User, group?: Group) {
-	return {
-		author: '',
-		pack: `=== Ergon Bot ===\n` +
-			`[👑] Autor: ${user.name}\n` +
-			`[📅] Data: ${now('D')}\n` +
-			// `[☃️] Dev: Edu\n` +
-			`[❓] Suporte: dsc.gg/ergon`,
-	}
 }
 
 // findKey: Search for a key inside an object
@@ -124,7 +111,7 @@ async function makeTempFile(content: Buf | str, preffix?: str, suffix?: str) {
 // cleanTemp: Clean temp folder
 async function cleanTemp() {
 	const temp = defaults.runner.tempFolder
-	await mkdir(temp).catch(() => { })
+	await mkdir(temp).catch(() => {})
 	// create temp folder if it does not exists
 
 	const files = await readdir(temp) // read folder

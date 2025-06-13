@@ -1,15 +1,10 @@
-import {
-	Cmd,
-	CmdCtx,
-	genStickerMeta,
-	isVisualNonSticker,
-	makeTempFile,
-	Msg,
-	runCode,
-} from '../../map.js'
+import { Cmd, CmdCtx, isVisualNonSticker, makeTempFile, Msg, runCode } from '../../map.js'
 import { randomDelay } from '../../util/functions.js'
+import { getMedia } from '../../util/messages.js'
 import { Sticker } from 'wa-sticker-formatter'
 import { readFile } from 'node:fs/promises'
+import { now } from '../../util/proto.js'
+import cache from '../../plugin/cache.js'
 
 export default class extends Cmd {
 	constructor() {
@@ -19,18 +14,18 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ msg, bot, args, user, group, sendUsage, t }: CmdCtx) {
+	async run({ msg, args, user, group, send, react, sendUsage, startTyping, t }: CmdCtx) {
 		const isValid = isVisualNonSticker
 
 		let target = isValid(msg.type) ? msg : (isValid(msg?.quoted?.type) ? msg.quoted : null)
 		// target = user msg or user quoted msg
 
-
+		await startTyping()
 		if (target) return await createSticker(target, this.subCmds)
 
 		// this logic will create a sticker for each media sent by
 		// the user until a msg is not from them
-		const chat = group || bot.cache.users.find((u) => u.phone === msg.chat.parsePhone())!
+		const chat = group || cache.users.find((u) => u.phone === msg.chat.parsePhone())!
 		const msgs = chat.msgs.reverse().slice(1)
 		// Sorts msgs from newest to oldest and ignores the cmd msg
 
@@ -40,7 +35,7 @@ export default class extends Cmd {
 		const validMsgs = invalidIndex === -1 ? msgs : msgs.slice(0, invalidIndex)
 
 		if (validMsgs.length === 0) return sendUsage()
-		await bot.react(msg, 'loading')
+		await react('loading')
 
 		for (const m of validMsgs) {
 			await createSticker(m, this.subCmds)
@@ -48,9 +43,9 @@ export default class extends Cmd {
 
 		async function createSticker(target: Msg, subCmds: str[]) {
 			// choose between msg media or quoted msg media
-			let buffer = await bot.downloadMedia(target)
+			let buffer = await getMedia(target)
 
-			if (!Buffer.isBuffer(buffer)) return bot.send(msg, t('sticker.nobuffer'))
+			if (!Buffer.isBuffer(buffer)) return send(t('sticker.nobuffer'))
 
 			let stickerTypes = ['full', 'crop']
 			if (args.includes(subCmds[1])) stickerTypes.push('crop')
@@ -81,15 +76,22 @@ export default class extends Cmd {
 			}
 
 			for (const type of stickerTypes) {
-				await randomDelay()
-
 				const metadata = new Sticker(buffer!, { // create sticker metadata
-					...genStickerMeta(user, group), // sticker author and pack
+					author: '',
+					pack: `=== Ergon Bot ===\n` +
+						`[👑] Autor: ${user.name}\n` +
+						`[📅] Data: ${now('D')}\n` +
+						// `[☃️] Dev: Edu\n` +
+						`[❓] Suporte: dsc.gg/ergon`,
 					type,
 					quality,
 				})
-				// send several crop types of the same sticker
-				await bot.send(msg.chat, await metadata.toMessage())
+
+				await randomDelay()
+					.then(async () => {
+						// send several crop types of the same sticker
+						await send(await metadata.toMessage())
+					})
 			}
 
 			return

@@ -1,4 +1,5 @@
 import { Cmd, CmdCtx, delay } from '../../map.js'
+import { randomDelay } from '../../util/functions.js'
 
 export default class extends Cmd {
 	constructor() {
@@ -16,21 +17,17 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, args, group }: CmdCtx) {
-		await bot.react(msg, 'loading')
-		await delay(2_000)
+	async run({ startTyping, send, args, group }: CmdCtx) {
+		await startTyping()
+		await randomDelay()
 		/** Delay, ok. But why?
-		 * Sometimes Baileys needs a time to generate
-		 * some things and it can lead the msg to fail.
-		 * So I did it to Baileys have a good time to tidy things up
+		 * Avoid WA bans.
 		 */
 
-		const mentions = group?.members.map((m) => m.id)
-
-		const text = !args[0] ? '@everyone' : args.join(' ')
-
-		await bot.send(msg.chat, { text, mentions })
-
-		bot.react(msg, 'ok')
+		await send({
+			text: args.join(' ') || '@everyone',
+			mentions: group?.members.map((m) => m.id),
+		})
+		return
 	}
 }

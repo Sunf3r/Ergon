@@ -4,7 +4,7 @@ export default class extends Cmd {
 	constructor() {
 		super({})
 	}
-	async run({ t, bot, msg, args, sendUsage }: CmdCtx) {
+	async run({ t, send, msg, args, sendUsage }: CmdCtx) {
 		if (!args[0] || !msg.text.includes(',')) return sendUsage()
 
 		const options = args.join(' ').split(',') // split options
@@ -13,7 +13,7 @@ export default class extends Cmd {
 		const chosen = options[Math.floor(Math.random() * options.length)]
 		// get random option
 
-		bot.send(msg, t('choose.result', { chosen: chosen.encode() }))
+		send(t('choose.result', { chosen: chosen.encode() }))
 		return
 	}
 }

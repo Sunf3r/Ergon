@@ -1,4 +1,6 @@
 import { Baileys, checkPermissions, CmdCtx, delay, getCtx } from '../../map.js'
+import { deleteMessage, react, send, startTyping } from '../../util/messages.js'
+import cache from '../../plugin/cache.js'
 import { type proto } from 'baileys'
 import { getFixedT } from 'i18next'
 
@@ -23,8 +25,8 @@ export default async function (bot: Baileys, raw: { messages: proto.IWebMessageI
 		} else user.msgs.add(msg.key.id!, msg)
 
 		// run functions waiting for msgs (waitFor)
-		if (bot.cache.wait.has(e)) {
-			bot.cache.wait.forEach((f: Function) => {
+		if (cache.wait.has(e)) {
+			cache.wait.forEach((f: Function) => {
 				try {
 					f(bot, msg, user, group)
 				} catch (e) {
@@ -36,12 +38,14 @@ export default async function (bot: Baileys, raw: { messages: proto.IWebMessageI
 		if (!cmd) continue
 		// get locales function
 		const t = getFixedT(user.lang)
+		const reactToMsg = react.bind(msg)
+		const sendMsg = send.bind(msg.chat)
 
 		// Check cmd permissions
 		const auth = checkPermissions(cmd, user, group)
 		if (auth !== true) {
-			if (auth === 'nodb') bot.send(msg, t('events.nodb'))
-			bot.react(msg, auth)
+			if (auth === 'nodb') sendMsg(t('events.nodb'))
+			reactToMsg(auth)
 			continue // you got censored OOOOMAGAAAA
 		}
 
@@ -52,6 +56,10 @@ export default async function (bot: Baileys, raw: { messages: proto.IWebMessageI
 			user,
 			bot,
 			cmd,
+			startTyping: startTyping.bind(msg.chat),
+			send: send.bind(msg.chat),
+			react: reactToMsg,
+			deleteMsg: deleteMessage.bind(msg),
 			msg,
 			t,
 		}
@@ -62,9 +70,9 @@ export default async function (bot: Baileys, raw: { messages: proto.IWebMessageI
 			user.lastCmd.delay += cooldown
 			const timeout = user.lastCmd.delay - now
 
-			await bot.send(msg, t('events.cooldown', { time: timeout.duration(true) }))
+			await sendMsg(t('events.cooldown', { time: timeout.duration(true) }))
 			// warns user about cooldown
-			if (timeout / 2 < cooldown) await bot.react(msg, 'clock')
+			if (timeout / 2 < cooldown) await reactToMsg('clock')
 
 			await delay(timeout)
 			// wait until it gets finished
@@ -72,22 +80,18 @@ export default async function (bot: Baileys, raw: { messages: proto.IWebMessageI
 
 		user.addCmd() // 1+ on user personal cmds count
 
-		// start typing (expires after about 10 seconds.)
-		// bot.sock.sendPresenceUpdate('composing', msg.chat);
-
 		Promise.resolve(cmd.run!(ctx))
 			.catch(async (e) => {
 				console.error(e, `EVENT/${e}`)
-				await bot.send(msg, `[⚠️] ${e?.message || e}`)
-				bot.react(msg, 'x')
+				sendMsg(`[⚠️] ${e?.message || e}`)
+				return
 			})
 
 		// sendUsage: sends cmd help menu
 		async function sendUsage() {
 			args[0] = cmd.name
 
-			await bot.cache.cmds.get('help').run(ctx)
-			bot.react(msg, '🤔')
+			cache.cmds.get('help').run(ctx)
 			return
 		}
 	}

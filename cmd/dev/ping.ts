@@ -6,19 +6,18 @@ export default class extends Cmd {
 			alias: ['p'],
 		})
 	}
-	async run({ bot, user, msg }: CmdCtx) {
+	async run({ user, react, send, msg }: CmdCtx) {
 		let text = `*Ping* 🏓\n`
 
 		// Calculate WA Ping
-		const WAPing = await measurePing(bot.react.bind(bot), msg, 'loading')
+		const WAPing = await measurePing(react.bind(msg), msg, 'sparkles')
 		text += createStr('🌐', '.WhatsApp_', WAPing)
 
 		// Calculate DB Ping
 		const DbPing = await measurePing(prisma.users.findUnique, { where: { id: user.id } })
 		text += createStr('🥜', '..Database_', DbPing)
 
-		await bot.send(msg, text)
-		bot.react(msg, 'ok')
+		await send(text)
 		return
 	}
 }
@@ -26,6 +25,7 @@ function createStr(emoji: str, name: str, ping: num) {
 	return `[${emoji}]` + name.bold() + '|' +
 		`${ping}ms`.align(8).bold() + '\n'
 }
+
 async function measurePing(func: Func, ...args: any): Promise<number> {
 	return await new Promise(async (res) => {
 		let ping

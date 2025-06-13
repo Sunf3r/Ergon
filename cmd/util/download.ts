@@ -9,7 +9,7 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, args, sendUsage }: CmdCtx) {
+	async run({ msg, args, react, send, sendUsage }: CmdCtx) {
 		let url = msg.text.getUrl()
 
 		if (!url) url = msg?.quoted?.text?.getUrl()
@@ -49,7 +49,7 @@ export default class extends Cmd {
 		cliArgs.push(`-o ${path}`)
 
 		try {
-			await bot.react(msg, 'loading')
+			await react('loading')
 
 			await runCode('zsh', `conf/venv/bin/yt-dlp ${cliArgs.join(' ')} "${args[0]}"`)
 
@@ -58,10 +58,10 @@ export default class extends Cmd {
 			//@ts-ignore
 			delete data.fileName
 
-			await bot.send(msg, data as AnyMessageContent)
-			bot.react(msg, 'ok')
+			await send(data as AnyMessageContent)
+			react('ok')
 		} catch (e: any) {
-			await bot.send(msg, `error: ${e?.message || e}`)
+			await send(`error: ${e?.message || e}`)
 		}
 		return
 	}
