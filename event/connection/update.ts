@@ -25,7 +25,7 @@ export default async function (event: Partial<ConnectionState>) {
 			// let timeout = cache.timeouts.get('cacheAllGroups')
 			// clearInterval(timeout)
 
-			// timeout = setTimeout(() => cacheAllGroups(bot), 15_000)
+			// timeout = setTimeout(() => cacheAllGroups(), 15_000)
 			// cache.timeouts.set('cacheAllGroups', timeout)
 			/** Why did I do that?
 			 * Cuz connection could reconnect several times and this event

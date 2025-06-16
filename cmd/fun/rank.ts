@@ -1,5 +1,5 @@
+import { getUser } from '../../plugin/prisma.js'
 import { Cmd, CmdCtx } from '../../map.js'
-import { getUser } from '../../util/prisma.js'
 
 export default class extends Cmd {
 	constructor() {

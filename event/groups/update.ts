@@ -1,4 +1,4 @@
-import { getGroup } from '../../util/prisma.js'
+import { getGroup } from '../../plugin/prisma.js'
 import cache from '../../plugin/cache.js'
 import { GroupMetadata } from 'baileys'
 

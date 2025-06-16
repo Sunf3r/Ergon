@@ -1,6 +1,7 @@
 import { mkdir, readdir, unlink, writeFile } from 'node:fs/promises'
-import { Baileys, defaults, Group } from '../map.js'
+import { defaults, Group } from '../map.js'
 import cache from '../plugin/cache.js'
+import bot from '../wa.js'
 
 export {
 	cacheAllGroups,
@@ -25,13 +26,13 @@ async function delay(time: num) { // resolve promise at timeout
 }
 
 // cacheAllGroups: cache all groups the bot is on
-async function cacheAllGroups(bot: Baileys) {
+async function cacheAllGroups() {
 	const groupList = await bot.sock.groupFetchAllParticipating()
 
 	let groups = Object.keys(groupList)
 
 	groups.forEach(async (g) => {
-		const group = await new Group(groupList[g]).checkData(bot)
+		const group = await new Group(groupList[g]).checkData()
 
 		cache.groups.set(group.id, group)
 	})

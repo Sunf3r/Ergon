@@ -1,4 +1,4 @@
-import { Cmd, CmdCtx, defaults, delay, isEmpty, Lang, prisma, runCode } from '../../map.js'
+import { Cmd, CmdCtx, defaults, delay, isEmpty, prisma, runCode } from '../../map.js'
 import { inspect } from 'node:util'
 import baileys from 'baileys'
 
@@ -17,7 +17,7 @@ export default class extends Cmd {
 		// all supported programming languages
 
 		// Language to be runned
-		const lang: Lang = langs.includes(args[0]) ? args.shift() : 'eval'
+		const lang = langs.includes(args[0]) ? args.shift() as Lang : 'eval'
 		const code = args.join(' ')
 		let output, startTime: num
 

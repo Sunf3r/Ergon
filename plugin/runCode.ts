@@ -2,16 +2,13 @@ import defaults from '../conf/defaults.json' with { type: 'json' }
 import { execSync } from 'node:child_process'
 import { writeFile } from 'node:fs/promises'
 
-type langs = 'py' | 'lua' | 'node' | 'deno' | 'bun' | 'zsh' | 'cpp'
-// supported programming languages
-
-export default async function runCode(lang: langs, code = '', file: str = '') {
+export default async function runCode(lang: Lang, code = '', file: str = '') {
 	const cli: str[] = []
 	let data
 
 	try {
 		if (file) {
-			lang = file.split('.')[1] as langs // get file extension
+			lang = file.split('.')[1] as Lang // get file extension
 
 			data = defaults.runner[lang] // get language instruction
 		} else {

@@ -1,4 +1,4 @@
-import { Baileys, Collection, defaults, Msg, prisma } from '../map.js'
+import { Collection, defaults, Msg, prisma } from '../map.js'
 import { GroupMetadata, GroupParticipant } from 'baileys'
 
 export default class Group {
@@ -111,7 +111,7 @@ export default class Group {
 	// 	}
 
 	// 	for (const m of participants) {
-	// 		const user = await bot.getUser({ phone: m.phone })
+	// 		const user = await getUser({ phone: m.phone })
 	// 		user.admin = m.admin
 	// 		members.push(user)
 	// 	}
@@ -119,7 +119,7 @@ export default class Group {
 	// 	return members
 	// }
 
-	async checkData(bot: Baileys) {
+	async checkData() {
 		// this.members = await this.indexParticipants(this.members as any, bot)
 		// I don't save any data of groups, but I let this func here bc
 		// if some day I store groups data,

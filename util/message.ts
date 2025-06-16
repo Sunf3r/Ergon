@@ -12,7 +12,7 @@ import {
 	User,
 } from '../map.js'
 import type { AnyMessageContent, proto } from 'baileys'
-import { getGroup, getUser } from './prisma.js'
+import { getGroup, getUser } from '../plugin/prisma.js'
 import cache from '../plugin/cache.js'
 import bot from '../wa.js'
 

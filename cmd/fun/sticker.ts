@@ -43,9 +43,10 @@ export default class extends Cmd {
 
 		async function createSticker(target: Msg, subCmds: str[]) {
 			// choose between msg media or quoted msg media
-			let buffer = await getMedia(target)
+			const media = await getMedia(target)
 
-			if (!Buffer.isBuffer(buffer)) return send(t('sticker.nobuffer'))
+			if (!media) return send(t('sticker.nobuffer'))
+			let buffer = media.data
 
 			let stickerTypes = ['full', 'crop']
 			if (args.includes(subCmds[1])) stickerTypes.push('crop')

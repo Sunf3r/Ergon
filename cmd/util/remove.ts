@@ -13,22 +13,22 @@ export default class extends Cmd {
 	async run({ msg, react, send, sendUsage, t }: CmdCtx) {
 		if (!isVisual(msg.type) && !isVisual(msg.quoted?.type)) return sendUsage()
 
-		let buffer = await getMedia(msg)
+		let media = await getMedia(msg)
 
-		if (!buffer || !Buffer.isBuffer(buffer)) return send(t('sticker.nobuffer'))
+		if (!media) return send(t('sticker.nobuffer'))
 		await react('loading')
 
-		const file = await makeTempFile(buffer, 'rmbg_', '.webp')
+		const file = await makeTempFile(media.data, 'rmbg_', '.webp')
 		// create temporary file
 
 		// execute python background remover plugin on
 		await runCode('py', `${file} ${file}.png`, 'plugin/removeBg.py')
 		// a child process
 
-		buffer = await readFile(`${file}.png`) || buffer
+		media.data = await readFile(`${file}.png`) || media.data
 		// read new file
 
-		await send({ caption: emojis['sparkles'], image: buffer })
+		await send({ caption: emojis['sparkles'], image: media.data })
 		react('ok')
 		return
 	}

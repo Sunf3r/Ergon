@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { Group, User } from '../map.js'
-import cache from '../plugin/cache.js'
+import cache from './cache.js'
 import bot from '../wa.js'
 
 const prisma = new PrismaClient()
