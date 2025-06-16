@@ -1,4 +1,5 @@
 import { Cmd, CmdCtx } from '../../map.js'
+import { getUser } from '../../util/prisma.js'
 
 export default class extends Cmd {
 	constructor() {
@@ -19,7 +20,7 @@ export default class extends Cmd {
 		for (const i in msgs) {
 			const { author, count } = msgs[i]
 
-			const user = await bot.getUser({ id: author })
+			const user = await getUser({ id: author })
 
 			text += t('rank.msgs', {
 				position: Number(i) + 1,

@@ -1,14 +1,16 @@
-import { Baileys, defaults, gemini, prisma, User } from '../map.js'
+import { defaults, gemini, prisma, User } from '../map.js'
+import { getUser } from '../util/prisma.js'
+import bot from '../wa.js'
 
-export default function reminder(bot: Baileys) {
+export default function reminder() {
 	if (!process.env.DATABASE_URL) return
 
-	checkReminders(bot)
-	setInterval(async () => checkReminders(bot), 1_000 * 60)
+	checkReminders()
+	setInterval(async () => checkReminders(), 1_000 * 60)
 	return
 }
 
-async function checkReminders(bot: Baileys) {
+async function checkReminders() {
 	let reminders = await prisma.reminders.findMany({
 		orderBy: { remindAt: 'asc' },
 		where: { isDone: false },
@@ -19,7 +21,7 @@ async function checkReminders(bot: Baileys) {
 
 	for (const r of reminders) {
 		print(r.msg)
-		sendReminders(bot, r)
+		sendReminders(r)
 			.then(() =>
 				prisma.reminders.update({
 					where: { id: r.id },
@@ -31,8 +33,8 @@ async function checkReminders(bot: Baileys) {
 	return
 }
 
-async function sendReminders(bot: Baileys, r: Reminder) {
-	const user = await bot.getUser({ id: r.author }) as User
+async function sendReminders(r: Reminder) {
+	const user = await getUser({ id: r.author }) as User
 	const lang = `langs.${user!.lang}`.t('en') || 'Portuguese'
 
 	let text = `\`${r.msg.replaceAll('`', '\`')}\`\n@${user.phone}`

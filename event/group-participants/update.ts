@@ -1,5 +1,5 @@
+import { getGroup } from '../../util/prisma.js'
 import { ParticipantAction } from 'baileys'
-import bot from '../../wa.js'
 
 /** group-participants.update:
  * This event will update members cache when a group member
@@ -7,8 +7,8 @@ import bot from '../../wa.js'
  */
 export default async function (groupEvent: Event) {
 	if (!['promote', 'demote'].includes(groupEvent.action)) return
-	const group = await bot.getGroup(groupEvent.id)
 
+	const group = await getGroup(groupEvent.id)
 	if (!group) return
 
 	const member = group.members.find((m) => m.id === groupEvent.author)

@@ -46,3 +46,15 @@ interface aiResponse {
 	text: str
 	tokens?: num
 }
+
+// alarm database typescript schema
+type Alarm = {
+	id: num
+	author: num
+	chat: str
+	msg: str
+	time: str
+	status: num
+}
+
+type AIMsg = { header: str; text: str; tokens: num; thoughts: num }

@@ -14,7 +14,7 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, e: st
 		if (!m?.message) continue
 
 		// get abstract msg obj
-		const context = await getCtx(m, bot)
+		const context = await getCtx(m)
 		if (!context.msg) continue
 		const { msg, args, cmd, group, user } = context
 
@@ -67,9 +67,9 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, e: st
 
 		const now = Date.now()
 		const cooldown = cmd.cooldown * 1_000
-		if (user.lastCmd.delay > now) {
-			user.lastCmd.delay += cooldown
-			const timeout = user.lastCmd.delay - now
+		if (user.delay > now) {
+			user.delay += cooldown
+			const timeout = user.delay - now
 
 			await sendMsg(t('events.cooldown', { time: timeout.duration(true) }))
 			// warns user about cooldown
@@ -77,7 +77,7 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, e: st
 
 			await delay(timeout)
 			// wait until it gets finished
-		} else user.lastCmd.delay = now + cooldown
+		} else user.delay = now + cooldown
 
 		user.addCmd() // 1+ on user personal cmds count
 

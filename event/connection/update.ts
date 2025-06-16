@@ -1,4 +1,4 @@
-import { Baileys, cacheAllGroups, Collection, delay } from '../../map.js'
+import { cacheAllGroups, Collection, delay } from '../../map.js'
 import { type ConnectionState, DisconnectReason } from 'baileys'
 import QRCode from 'qrcode'
 import bot from '../../wa.js'

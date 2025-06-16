@@ -1,6 +1,7 @@
-import { Baileys, locale, proto, reminder } from './map.js'
-// import cache from './plugin/cache.js'
 import { loadCmds, loadEvents } from './util/handler.js'
+import { locale, proto, reminder } from './map.js'
+// import cache from './plugin/cache.js'
+import Baileys from './class/baileys.js'
 
 proto() // load prototypes
 locale() // load locales
@@ -12,7 +13,7 @@ async function start() {
 	await bot.connect()
 	await loadCmds()
 	await loadEvents()
-	reminder(bot) // start reminder service
+	reminder() // start reminder service
 }
 
 export default bot

@@ -1,6 +1,5 @@
 import {
 	allMsgTypes,
-	Baileys,
 	Cmd,
 	CmdCtx,
 	coolValues,
@@ -13,10 +12,12 @@ import {
 	User,
 } from '../map.js'
 import type { AnyMessageContent, proto } from 'baileys'
+import { getGroup, getUser } from './prisma.js'
 import cache from '../plugin/cache.js'
+import bot from '../wa.js'
 
 // getCtx: command context === message abstraction layer
-async function getCtx(raw: proto.IWebMessageInfo, bot: Baileys): Promise<CmdCtx> {
+async function getCtx(raw: proto.IWebMessageInfo): Promise<CmdCtx> {
 	const { message, key, pushName } = raw
 
 	let fakeCtx = {} as CmdCtx
@@ -26,13 +27,13 @@ async function getCtx(raw: proto.IWebMessageInfo, bot: Baileys): Promise<CmdCtx>
 	if (!coolValues.includes(types[0])) return fakeCtx
 
 	let group: Group
-	if (key.remoteJid?.includes('@g.us')) group = await bot.getGroup(key.remoteJid)
+	if (key.remoteJid?.includes('@g.us')) group = await getGroup(key.remoteJid)
 
 	let phone = key.fromMe ? bot.sock.user?.id! : key.remoteJid!
 	if (key.participant) phone = key.participant!
 
 	if (phone.endsWith('@g.us')) return fakeCtx
-	let user = await bot.getUser({ phone })
+	let user = await getUser({ phone })
 
 	const isMediaMsg = isMedia(types[0]) // is it video, photo or audio msg
 

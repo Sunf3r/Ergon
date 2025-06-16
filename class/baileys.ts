@@ -1,4 +1,3 @@
-import { Group, User } from '../map.js'
 import {
 	Browsers,
 	makeCacheableSignalKeyStore,
@@ -7,7 +6,6 @@ import {
 	type WASocket,
 } from 'baileys'
 import { logger } from '../util/proto.js'
-import cache from '../plugin/cache.js'
 
 export async function connect(auth: str) {
 	// Use saved session
@@ -79,43 +77,5 @@ export default class Baileys {
 		// save login creds
 		this.sock.ev.on('creds.update', saveCreds)
 		return
-	}
-
-	async getUser({ id, phone }: { id?: num; phone?: str }): Promise<User | undefined> {
-		let user
-
-		if (id) { // means user is already on db
-			const data = cache.users.get(id)
-
-			if (data) return data
-			user = await new User({ id }).checkData()
-			cache.users.add(id, user)
-		} else {
-			const number = phone!.parsePhone()
-			const data = cache.users.find((u) => u.phone === number)
-
-			if (data) return data
-			user = await new User({ phone }).checkData()
-			if (!user) return
-			if (!process.env.DATABASE_URL) user.id = Number(user.phone)
-			cache.users.add(user.id, user)
-		}
-
-		return user
-	}
-
-	// get a group cache or fetch it
-	async getGroup(id: str): Promise<Group> {
-		let group = cache.groups.get(id) // cache
-
-		if (group) return group
-		else {
-			// fetch group metadata
-			const data = await this.sock.groupMetadata(id)
-
-			group = await new Group(data).checkData(this)
-			cache.groups.set(group.id, group)
-			return group
-		}
 	}
 }
