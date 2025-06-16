@@ -1,5 +1,5 @@
-import { cacheAllGroups, Collection, delay } from '../../map.js'
 import { type ConnectionState, DisconnectReason } from 'baileys'
+import { Collection, delay } from '../../map.js'
 import QRCode from 'qrcode'
 import bot from '../../wa.js'
 

@@ -6,7 +6,7 @@ import { getFixedT } from 'i18next'
 import bot from '../../wa.js'
 
 // messages upsert event
-export default async function (raw: { messages: proto.IWebMessageInfo[] }, e: str) {
+export default async function (raw: { messages: proto.IWebMessageInfo[] }, event: str) {
 	// raw.messages = []
 
 	// sometimes you can receive more then 1 message per trigger, so use for
@@ -24,17 +24,6 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, e: st
 			if (!msg.isBot) group.countMsg(user.id)
 			// count msgs with cool values for group msgs rank cmd
 		} else user.msgs.add(msg.key.id!, msg)
-
-		// run functions waiting for msgs (waitFor)
-		if (cache.wait.has(e)) {
-			cache.wait.forEach((f: Function) => {
-				try {
-					f(bot, msg, user, group)
-				} catch (e) {
-					console.error(e, `EVENT/${e}/waitFor`)
-				}
-			})
-		}
 
 		if (!cmd) continue
 		// get locales function
@@ -65,25 +54,26 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, e: st
 			t,
 		}
 
+		/* * Cooldown checking */
 		const now = Date.now()
-		const cooldown = cmd.cooldown * 1_000
 		if (user.delay > now) {
-			user.delay += cooldown
+			user.delay += cmd.cooldown
 			const timeout = user.delay - now
 
-			await sendMsg(t('events.cooldown', { time: timeout.duration(true) }))
-			// warns user about cooldown
-			if (timeout / 2 < cooldown) await reactToMsg('clock')
+			if (user.delay - Date.now() < 10_000) {
+				await sendMsg(t('events.cooldown', { time: timeout.duration(true) }))
+				// warns user about cooldown
+			}
 
 			await delay(timeout)
 			// wait until it gets finished
-		} else user.delay = now + cooldown
+		} else user.delay = now + cmd.cooldown
 
 		user.addCmd() // 1+ on user personal cmds count
 
 		Promise.resolve(cmd.run!(ctx))
 			.catch(async (e) => {
-				console.error(e, `EVENT/${e}`)
+				console.log(`EVENT/${event}`, e, 'red')
 				sendMsg(`[⚠️] ${e?.message || e}`)
 				return
 			})

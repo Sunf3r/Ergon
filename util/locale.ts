@@ -14,13 +14,13 @@ export default async function () {
 				fallbackLng: 'en', // if a key does not have a value in a lang, use the english value
 				backend: { loadPath: 'locale/{{lng}}.json' },
 				interpolation: { escapeValue: false },
-				returnEmptyString: false,
+				returnEmptyString: true,
 				returnObjects: true,
 			})
 
 		print('i18next', `${languages.length} languages loaded`, 'blue')
 	} catch (e) {
-		console.error(e, 'i18next')
+		console.log('i18next', e, 'red')
 	}
 	return
 }

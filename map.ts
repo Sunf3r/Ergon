@@ -11,7 +11,6 @@ import {
 	coolValues,
 	isMedia,
 	isVisual,
-	isVisualNonSticker,
 	mediaTypes,
 	textTypes,
 	visualTypes,
@@ -26,7 +25,6 @@ export {
 	GroupMsg,
 	isMedia,
 	isVisual,
-	isVisualNonSticker,
 	MediaMsg,
 	mediaTypes,
 	Msg,
@@ -52,35 +50,22 @@ export { Cmd, Collection, Group, prisma, User }
 
 // Functions
 import { checkPermissions, getCtx, msgMeta } from './util/message.js'
-import {
-	cacheAllGroups,
-	cleanTemp,
-	delay,
-	findKey,
-	genRandomName,
-	isEmpty,
-	isValidPositiveIntenger,
-	makeTempFile,
-} from './util/functions.js'
+import { delay, findKey, isEmpty, isValidPositiveIntenger } from './util/functions.js'
 import locale, { languages } from './util/locale.js'
 import CacheManager from './plugin/cache.js'
 import runCode from './plugin/runCode.js'
 import proto from './util/proto.js'
 
 export {
-	cacheAllGroups,
 	CacheManager,
 	checkPermissions,
-	cleanTemp,
 	delay,
 	findKey,
-	genRandomName,
 	getCtx,
 	isEmpty,
 	isValidPositiveIntenger,
 	languages,
 	locale,
-	makeTempFile,
 	msgMeta,
 	proto,
 	runCode,

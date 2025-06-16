@@ -5,7 +5,7 @@ export default class extends Cmd {
 	constructor() {
 		super({
 			alias: ['t'],
-			cooldown: 5,
+			cooldown: 5_000,
 		})
 	}
 
@@ -22,7 +22,7 @@ export default class extends Cmd {
 
 			send(text)
 		} catch (e) {
-			console.error(e, 'CMD/TRANSLATE')
+			console.log('CMD/TRANSLATE', e, 'red')
 			sendUsage()
 		}
 		return

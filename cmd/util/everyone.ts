@@ -1,18 +1,12 @@
-import { Cmd, CmdCtx, delay } from '../../map.js'
 import { randomDelay } from '../../util/functions.js'
+import { Cmd, CmdCtx } from '../../map.js'
 
 export default class extends Cmd {
 	constructor() {
 		super({
+			cooldown: 5_000,
 			access: {
 				dm: false,
-				admin: true, /** Admin: true
-				 * (it means only group admins can run this cmd)
-				 * I don't think it's really necessary bc
-				 * every group member can just mention everyone
-				 * and then copy/paste it every time, but
-				 * I was asked for it by a user. So, I did it for him
-				 */
 			},
 		})
 	}

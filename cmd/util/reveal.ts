@@ -1,3 +1,4 @@
+import { randomDelay } from '../../util/functions.js'
 import { getMedia } from '../../util/messages.js'
 import { AnyMessageContent } from 'baileys'
 import { Cmd, CmdCtx } from '../../map.js'
@@ -9,22 +10,20 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ msg, send, react, sendUsage, t }: CmdCtx) {
-		if (!msg.isMedia && !msg.quoted?.isMedia) return sendUsage()
+	async run({ msg, send, startTyping, t }: CmdCtx) {
+		const media = await getMedia(msg)
+		if (!media) return send(t('sticker.nobuffer'))
+		await startTyping()
+		await randomDelay()
 
-		let buffer = await getMedia(msg)
-
-		if (!buffer || !Buffer.isBuffer(buffer)) return send(t('sticker.nobuffer'))
-
-		await react('sparkles')
 		const msgObj = {
-			caption: msg?.quoted?.text || '',
+			caption: media.target?.text || '',
 		} as AnyMessageContent
 
 		// @ts-ignore send sticker as image
-		msgObj[target.type === 'sticker' ? 'image' : target.type] = buffer
+		msgObj[media.target.type === 'sticker' ? 'image' : media.target.type] = buffer
 
-		await send(msgObj)
+		send(msgObj)
 		return
 	}
 }

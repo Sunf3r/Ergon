@@ -3,7 +3,7 @@ import { Cmd, CmdCtx, delay, isValidPositiveIntenger } from '../../map.js'
 export default class extends Cmd {
 	constructor() {
 		super({
-			cooldown: 10,
+			cooldown: 10_000,
 			subCmds: ['reverse'],
 		})
 	}

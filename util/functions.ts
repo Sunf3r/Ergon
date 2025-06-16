@@ -1,45 +1,10 @@
-import { mkdir, readdir, unlink, writeFile } from 'node:fs/promises'
-import { defaults, Group } from '../map.js'
-import cache from '../plugin/cache.js'
-import bot from '../wa.js'
-
-export {
-	cacheAllGroups,
-	cleanTemp,
-	delay,
-	findKey,
-	genRandomName,
-	isEmpty,
-	isValidPositiveIntenger,
-	makeTempFile,
-	randomDelay,
-}
-
-async function randomDelay() {
-	const time = 2_000 + Math.floor(Math.random() * 3_000)
-	return delay(time)
-}
-
 // Delay: make the code wait for some time
-async function delay(time: num) { // resolve promise at timeout
-	return await new Promise((r) => setTimeout(() => r(true), time))
-}
+const delay = async (time: num) => await new Promise((r) => setTimeout(() => r(true), time))
 
-// cacheAllGroups: cache all groups the bot is on
-async function cacheAllGroups() {
-	const groupList = await bot.sock.groupFetchAllParticipating()
+const randomDelay = async () => delay(2_000 + Math.floor(Math.random() * 3_000))
 
-	let groups = Object.keys(groupList)
-
-	groups.forEach(async (g) => {
-		const group = await new Group(groupList[g]).checkData()
-
-		cache.groups.set(group.id, group)
-	})
-
-	print('CACHE', `${groups.length} groups cached`, 'blue')
-	return
-}
+// isValidPositiveIntenger: validate a number
+const isValidPositiveIntenger = (num: num) => !Number.isNaN(num) && num > 0 && Number.isInteger(num)
 
 // findKey: Search for a key inside an object
 function findKey(obj: any, key: str): any {
@@ -81,44 +46,4 @@ function isEmpty(value: unknown): bool { // check if a array/obj is empty
 	return true
 }
 
-// isValidPositiveIntenger: validate a number
-function isValidPositiveIntenger(value: num): bool {
-	return !Number.isNaN(value) && value > 0 && Number.isInteger(value)
-}
-
-// genRandomName: Generate random names useful for temporary file names
-function genRandomName(length: num = 20, prefix = '', suffix = ''): str {
-	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-	let result = ''
-
-	for (let i = 0; i < length; i++) {
-		const randomIndex = Math.floor(Math.random() * characters.length)
-		result += characters.charAt(randomIndex) // gen random chars
-	}
-
-	return prefix + result + suffix // concatenate random str and preffix/suffix
-}
-
-// makeTempFile: Write a temporary file
-async function makeTempFile(content: Buf | str, preffix?: str, suffix?: str) {
-	const fileName = genRandomName(20, preffix, suffix) // generate random name
-	const path = `${defaults.runner.tempFolder}/${fileName}`
-
-	await writeFile(path, content) // create file
-
-	return path
-}
-
-// cleanTemp: Clean temp folder
-async function cleanTemp() {
-	const temp = defaults.runner.tempFolder
-	await mkdir(temp).catch(() => {})
-	// create temp folder if it does not exists
-
-	const files = await readdir(temp) // read folder
-
-	files.forEach((f) => unlink(`${temp}/${f}`))
-	// delete all files on it
-
-	return
-}
+export { delay, findKey, isEmpty, isValidPositiveIntenger, randomDelay }

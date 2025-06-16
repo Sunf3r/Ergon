@@ -32,7 +32,7 @@
 		"chalk": "^5.4.1",
 		"google-translate": "github:iamtraction/google-translate",
 		"humanize-duration": "^3.33.0",
-		"i18next": "^24.2.3",
+		"i18next": "^25.2.1",
 		"i18next-fs-backend": "^2.6.0",
 		"jimp": "^0.16.13",
 		"luxon": "^3.6.1",
@@ -43,7 +43,7 @@
 	"devDependencies": {
 		"@types/humanize-duration": "^3.27.4",
 		"@types/luxon": "^3.6.2",
-		"@types/node": "^22.15.31",
+		"@types/node": "^22.15.32",
 		"@types/qrcode": "^1.5.5",
 		"pino-pretty": "^13.0.0",
 		"prisma": "^6.9.0"

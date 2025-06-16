@@ -1,11 +1,12 @@
 import { AnyMessageContent } from 'baileys'
-import { Cmd, CmdCtx, genRandomName, runCode } from '../../map.js'
+import { Cmd, CmdCtx, runCode } from '../../map.js'
 import { readFileSync } from 'node:fs'
 
 export default class extends Cmd {
 	constructor() {
 		super({
 			alias: ['d'],
+			cooldown: 10_000,
 		})
 	}
 
@@ -29,17 +30,17 @@ export default class extends Cmd {
 			video?: Buffer
 			audio?: Buffer
 		} = {
-			fileName: genRandomName(20, 'ytdlp_', '.'),
+			fileName: `yt_dlp_${Date.now()}.`,
 			mimetype: '',
 		}
 
 		if (type === 'video') {
-			cliArgs.push('--recode-video mp4')
+			cliArgs.push('-t mp4')
 
 			data.fileName += 'mp4'
 			data.mimetype = 'video/mp4'
 		} else {
-			cliArgs.push('-x', '--audio-format mp3')
+			cliArgs.push('-t mp3')
 
 			data.fileName += 'mp3'
 			data.mimetype = 'audio/mpeg'

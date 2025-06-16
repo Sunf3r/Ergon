@@ -1,6 +1,8 @@
 import { AnyMessageContent, downloadMediaMessage, proto } from 'baileys'
-import { emojis, getCtx, Msg, msgMeta } from '../map.js'
+import { CmdCtx, emojis, getCtx, Msg, msgMeta, User } from '../map.js'
+import cache from '../plugin/cache.js'
 import { logger } from './proto.js'
+import { getFixedT } from 'i18next'
 import bot from '../wa.js'
 
 export { deleteMessage, editMsg, getMedia, react, send, sendOrEdit, startTyping }
@@ -18,7 +20,8 @@ async function getMedia(msg: Msg, startTyping?: Func) {
 
 	return {
 		data: media,
-		mime: target.mime, // media mimetype like image/png
+		mime: target.mime, // media mimetype like image/png,
+		target,
 	}
 }
 
@@ -27,13 +30,32 @@ async function startTyping(this: str) {
 }
 
 // simple abstraction to send a msg
-async function send(this: str, body: str | AnyMessageContent) {
+async function send(this: str, text: str | AnyMessageContent, user?: User) {
 	// reply?: baileys.proto.IWebMessageInfo)
-	const text = typeof body === 'string' ? { text: body } : body
+	let content = text
+
+	if (typeof text === 'string') {
+		// it's a string, so it can be a text or a template string
+
+		if (user) {
+			// it's a template string, so we can use user's lang
+			const t = getFixedT(user.lang)
+
+			if (text.startsWith('usage.')) { // it's a cmd usage
+				text = text.replace('usage.', '')
+
+				cache.cmds.get('help').run({ args: [text], send: send.bind(this), user, t })
+				// run help cmd to get cmd usage
+				return {} as CmdCtx
+			}
+			// it's not a cmd usage, but it's a template string
+			content = { text: t(text) } // get the localized text
+		} else content = { text } // default content type
+	}
 
 	const msg = await bot.sock.sendMessage(
 		!this.includes('@') ? this + '@s.whatsapp.net' : this,
-		text,
+		content as AnyMessageContent,
 	) //, quote)
 
 	// convert raw msg on cmd context

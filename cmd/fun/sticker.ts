@@ -1,8 +1,8 @@
-import { Cmd, CmdCtx, isVisualNonSticker, makeTempFile, Msg, runCode } from '../../map.js'
+import { Cmd, CmdCtx, defaults, isVisual, Msg, runCode } from '../../map.js'
+import { readFile, writeFile } from 'node:fs/promises'
 import { randomDelay } from '../../util/functions.js'
 import { getMedia } from '../../util/messages.js'
 import { Sticker } from 'wa-sticker-formatter'
-import { readFile } from 'node:fs/promises'
 import { now } from '../../util/proto.js'
 import cache from '../../plugin/cache.js'
 
@@ -10,75 +10,86 @@ export default class extends Cmd {
 	constructor() {
 		super({
 			alias: ['s', 'sexo'],
-			subCmds: ['rmbg', 'crop', 'rounded', 'circle', 'default'],
+			cooldown: 5_000,
+			subCmds: ['rmbg', 'rounded', 'circle', 'default'],
 		})
 	}
 
-	async run({ msg, args, user, group, send, react, sendUsage, startTyping, t }: CmdCtx) {
-		const isValid = isVisualNonSticker
+	async run({ msg, args, user, group, send, react, startTyping, t }: CmdCtx) {
+		const media = await getMedia(msg)
 
-		let target = isValid(msg.type) ? msg : (isValid(msg?.quoted?.type) ? msg.quoted : null)
-		// target = user msg or user quoted msg
+		// if there is no media or msg type is not visual
+		if (!media || !isVisual(msg.type)) {
+			// this logic will create a sticker for each media sent by
+			// the user until a msg is not from them
+			const chat = group || cache.users.find((u) => u.phone === msg.chat.parsePhone())!
+			const msgs = chat.msgs.reverse().slice(1)
+			// Sorts msgs from newest to oldest and ignores the cmd msg
 
-		await startTyping()
-		if (target) return await createSticker(target, this.subCmds)
+			// Find the index of the first msg that is not from the same author or is not valid
+			const invalidIndex = msgs.findIndex((m) =>
+				m.author !== msg.author || !isVisual(m.type) || m.type === 'sticker'
+			)
 
-		// this logic will create a sticker for each media sent by
-		// the user until a msg is not from them
-		const chat = group || cache.users.find((u) => u.phone === msg.chat.parsePhone())!
-		const msgs = chat.msgs.reverse().slice(1)
-		// Sorts msgs from newest to oldest and ignores the cmd msg
+			const validMsgs = invalidIndex === -1 ? msgs : msgs.slice(0, invalidIndex)
 
-		// Find the index of the first msg that is not from the same author or is not valid
-		const invalidIndex = msgs.findIndex((m) => m.author !== msg.author || !isValid(m.type))
+			if (!validMsgs.length) return send(t('sticker.nobuffer'))
+			await react('sparkles')
 
-		const validMsgs = invalidIndex === -1 ? msgs : msgs.slice(0, invalidIndex)
-
-		if (validMsgs.length === 0) return sendUsage()
-		await react('loading')
-
-		for (const m of validMsgs) {
-			await createSticker(m, this.subCmds)
+			for (const m of validMsgs) await createSticker(m, this.subCmds)
+			return
 		}
 
+		await startTyping()
+		createSticker(media.target, this.subCmds)
+		return
+
 		async function createSticker(target: Msg, subCmds: str[]) {
-			// choose between msg media or quoted msg media
 			const media = await getMedia(target)
-
-			if (!media) return send(t('sticker.nobuffer'))
-			let buffer = media.data
-
-			let stickerTypes = ['full', 'crop']
-			if (args.includes(subCmds[1])) stickerTypes.push('crop')
-			if (args.includes(subCmds[2])) stickerTypes.push('rounded')
-			if (args.includes(subCmds[3])) stickerTypes.push('circle')
-			if (args.includes(subCmds[4])) stickerTypes.push('default')
-			// add other sticker types
-
+			let { data, mime } = media!
 			let quality = 20 // media quality after compression
 
-			switch (target.type) {
-				case 'video':
+			const formats = ['full', 'crop']
+			if (args.includes(subCmds[1])) formats.push('rounded')
+			if (args.includes(subCmds[2])) formats.push('circle')
+			if (args.includes(subCmds[3])) formats.push('default')
+			// add other sticker formats
+
+			const msgTypeWays = {
+				sticker() {
+					send({ image: data })
+					return
+				},
+				async image() {
+					if (!args.includes(subCmds[0])) return
+					// remove image background
+					const file = await writeFile(
+						defaults.runner.tempFolder + `sticker_${Date.now()}.webp`,
+						data,
+					)
+					// create temporary file
+
+					// execute python background remover plugin on
+					await runCode('py', `${file} ${file}.png`, 'plugin/removeBg.py')
+					// a child process
+
+					data = await readFile(`${file}.png`) || data
+					// read new file
+					return
+				},
+				async video() {
 					quality = 25 // videos needs to be more compressed
 					// but compress a video too much can cause some glitches on video
-					break
-				case 'image':
-					if (args.includes(subCmds[0])) { // remove image background
-						const file = await makeTempFile(buffer, 'sticker_', '.webp')
-						// create temporary file
-
-						// execute python background remover plugin on
-						await runCode('py', `${file} ${file}.png`, 'plugin/removeBg.py')
-						// a child process
-
-						buffer = await readFile(`${file}.png`) || buffer
-						// read new file
-					}
+				},
 			}
 
-			for (const type of stickerTypes) {
-				const metadata = new Sticker(buffer!, { // create sticker metadata
-					author: '',
+			if (target.type in msgTypeWays) {
+				await msgTypeWays[target.type as keyof typeof msgTypeWays]()
+			}
+
+			for (const type of formats) {
+				const metadata = new Sticker(data!, {
+					author: '', // sticker metadata
 					pack: `=== Ergon Bot ===\n` +
 						`[👑] Autor: ${user.name}\n` +
 						`[📅] Data: ${now('D')}\n` +
