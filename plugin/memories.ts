@@ -1,7 +1,7 @@
 import { prisma, User } from '../map.js'
 
 export { cleanMemories, createMemories }
-const memoryRegex = /{MEMORY:( |)[a-z].+}/gi
+const memoryRegex = /{MEMORY:.+}/gi
 
 // createMemories: add memories to user
 async function createMemories(user: User, msg: AIMsg) {

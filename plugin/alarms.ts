@@ -7,7 +7,7 @@ export { createAlarms, getUserAlarms, sendAlarms }
 
 let alarmTimeout: NodeJS.Timeout
 let nextAlarmTime = 0
-const alarmRegex = /{ALARM:( |)[a-z].+:[0-9].+}/gi
+const alarmRegex = /{ALARM:.+:[0-9].+}/gi
 
 async function sendAlarms() {
 	const alarms: Alarm[] = await prisma.alarms.findMany({
