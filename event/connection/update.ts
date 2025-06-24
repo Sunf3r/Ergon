@@ -1,14 +1,20 @@
 import { type ConnectionState, DisconnectReason } from 'baileys'
-import { Baileys, cacheAllGroups, Collection, delay } from '../../map.js'
+import { Collection, delay } from '../../map.js'
+import QRCode from 'qrcode'
+import bot, { start } from '../../wa.js'
 
 // Keep last 5 logins DateTime
 const lastLogins = new Collection<num, num>(5)
 
 // connection update event
-export default async function (bot: Baileys, event: Partial<ConnectionState>) {
+export default async function (event: Partial<ConnectionState>) {
 	const disconnection = event.lastDisconnect?.error as any
 	const exitCode = disconnection?.output?.statusCode
 	// disconnection code
+
+	if (event.qr) {
+		print(await QRCode.toString(event.qr, { type: 'terminal' }))
+	}
 
 	switch (event.connection) {
 		case 'open': // bot started
@@ -16,11 +22,11 @@ export default async function (bot: Baileys, event: Partial<ConnectionState>) {
 			bot.sock.sendPresenceUpdate('unavailable')
 			print('NET', 'Connection stabilized', 'green')
 
-			// let timeout = bot.cache.timeouts.get('cacheAllGroups')
+			// let timeout = cache.timeouts.get('cacheAllGroups')
 			// clearInterval(timeout)
 
-			// timeout = setTimeout(() => cacheAllGroups(bot), 15_000)
-			// bot.cache.timeouts.set('cacheAllGroups', timeout)
+			// timeout = setTimeout(() => cacheAllGroups(), 15_000)
+			// cache.timeouts.set('cacheAllGroups', timeout)
 			/** Why did I do that?
 			 * Cuz connection could reconnect several times and this event
 			 * will be triggered several times too. So, all groups will
@@ -48,6 +54,7 @@ export default async function (bot: Baileys, event: Partial<ConnectionState>) {
 				const now = Date.now()
 				lastLogins.add(now, now)
 				bot.connect()
+				// start()
 			}
 			return
 	}

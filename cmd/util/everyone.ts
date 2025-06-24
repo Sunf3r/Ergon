@@ -1,36 +1,27 @@
-import { Cmd, CmdCtx, delay } from '../../map.js'
+import { randomDelay } from '../../util/functions.js'
+import { Cmd, CmdCtx } from '../../map.js'
 
 export default class extends Cmd {
 	constructor() {
 		super({
+			cooldown: 5_000,
 			access: {
 				dm: false,
-				admin: true, /** Admin: true
-				 * (it means only group admins can run this cmd)
-				 * I don't think it's really necessary bc
-				 * every group member can just mention everyone
-				 * and then copy/paste it every time, but
-				 * I was asked for it by a user. So, I did it for him
-				 */
 			},
 		})
 	}
 
-	async run({ bot, msg, args, group }: CmdCtx) {
-		await bot.react(msg, 'loading')
-		await delay(2_000)
+	async run({ startTyping, send, args, group }: CmdCtx) {
+		await startTyping()
+		await randomDelay()
 		/** Delay, ok. But why?
-		 * Sometimes Baileys needs a time to generate
-		 * some things and it can lead the msg to fail.
-		 * So I did it to Baileys have a good time to tidy things up
+		 * Avoid WA bans.
 		 */
 
-		const mentions = group?.members.map((m) => m.id)
-
-		const text = !args[0] ? '@everyone' : args.join(' ')
-
-		await bot.send(msg.chat, { text, mentions })
-
-		bot.react(msg, 'ok')
+		await send({
+			text: args.join(' ') || '@everyone',
+			mentions: group?.members.map((m) => m.id),
+		})
+		return
 	}
 }

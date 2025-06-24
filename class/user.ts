@@ -1,39 +1,34 @@
-import { Collection, db, Msg, prisma } from '../map.js'
-import { Content } from '@google/generative-ai'
+import { Collection, defaults, Msg, prisma } from '../map.js'
+import { UserSchema } from '../conf/types/types.js'
+import { Content } from '@google/genai'
 
 export default class User {
 	id: num
 	phone: str
-	warns: str[]
 
-	_name: str
-	_lang: str
-	_prefix: str
-	_cmdsCount: num
+	private _name: str
+	private _lang: str
+	private _prefix: str
+	cmds: num
+	delay: num
 
-	geminiCtx: Content[] // gemini conversation history
-	grok: { role: str; content: str }[]
-	lastCmd: {
-		delay: num
-	}
+	memories: str[]
+	gemini: Content[]
 	msgs: Collection<str, Msg>
 
-	constructor(data: Partial<User>) {
-		this.id = data.id || 0
-		this.phone = (data.phone || '').parsePhone()
-		this.warns = []
+	constructor({ id, phone, name, cmds, prefix, lang, memories }: Partial<UserSchema>) {
+		this.id = id!
+		this.phone = phone!.parsePhone()
 
-		this._name = data._name || 'name'
-		this._cmdsCount = data._cmdsCount || 0
-		this._prefix = data._prefix || db.user.prefix
-		this._lang = data._lang || db.user.language
+		this._name = name || 'user'
+		this._lang = lang || defaults.lang
+		this._prefix = prefix || defaults.prefix
+		this.cmds = cmds || 0
+		this.delay = 0
 
-		this.lastCmd = data.lastCmd || { delay: 0 }
-		this.geminiCtx = data.geminiCtx || []
-		this.grok = data.grok || []
-		this.msgs = new Collection(db.user.msgsLimit)
-
-		this.msgs.iterate(data?.msgs)
+		this.msgs = new Collection(defaults.cache.dmMsgs)
+		this.memories = JSON.parse(memories || '[]')
+		this.gemini = []
 	}
 
 	// get chat: get user phone number on cache to send msgs
@@ -48,8 +43,6 @@ export default class User {
 
 	// set name: update user name on cache and db
 	public set name(value: str) {
-		value = value.slice(0, 25)
-
 		this._name = value
 		;(async () =>
 			process.env.DATABASE_URL &&
@@ -57,6 +50,7 @@ export default class User {
 				where: { id: this.id },
 				data: { name: value },
 			}))()
+		return
 	}
 
 	// get lang: get user language on cache
@@ -66,8 +60,6 @@ export default class User {
 
 	// set lang: update user language on cache and db
 	public set lang(value: str) {
-		value = value.slice(0, 2)
-
 		this._lang = value
 		;(async () =>
 			process.env.DATABASE_URL &&
@@ -75,6 +67,7 @@ export default class User {
 				where: { id: this.id },
 				data: { lang: value },
 			}))()
+		return
 	}
 
 	// get prefix: get prefix prefix on cache
@@ -84,8 +77,6 @@ export default class User {
 
 	// set prefix: update user prefix on cache and db
 	set prefix(value: str) {
-		value = value.slice(0, 3)
-
 		this._prefix = value
 		;(async () =>
 			process.env.DATABASE_URL &&
@@ -93,16 +84,12 @@ export default class User {
 				where: { id: this.id },
 				data: { prefix: value },
 			}))()
-	}
-
-	// get cmds: get user cmds count
-	get cmds() {
-		return this._cmdsCount
+		return
 	}
 
 	// addCmd: +1 on user cmds count on cache and db
 	async addCmd() {
-		this._cmdsCount++
+		this.cmds++
 
 		if (!process.env.DATABASE_URL) return
 		await prisma.users.update({
@@ -111,49 +98,6 @@ export default class User {
 				cmds: { increment: 1 },
 			},
 		})
-	}
-
-	// checkData: sync user data on cache/db
-	async checkData() {
-		try {
-			let data = await prisma.users.findFirst({
-				where: {
-					OR: [
-						{ phone: this.phone },
-						{ id: this.id },
-					],
-				}, // fetch it
-			})
-
-			if (!data) {
-				data = await prisma.users.create({
-					data: { // create a new user
-						phone: this.phone,
-						name: this._name, // default values
-						lang: this._lang,
-						prefix: this._prefix,
-					},
-				})
-			}
-
-			// update cache
-			this.id = data.id
-			this.phone = data.phone
-			this._name = data.name
-			this._lang = data.lang
-			this._prefix = data.prefix
-			this._cmdsCount = data.cmds
-
-			return this
-		} catch (e) {
-			if (!process.env.DATABASE_URL) return this
-
-			print('CHECKUSERDATA ERROR', e, 'red')
-			print('User data:', {
-				phone: this.phone,
-				id: this.id,
-			})
-			return
-		}
+		return
 	}
 }

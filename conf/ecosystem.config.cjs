@@ -6,15 +6,14 @@
 const node_args = [
 	'--expose-gc',
 	'--no-warnings',
-	'--env-file=settings/.env',
+	'--env-file=conf/.env',
 ]
 
 module.exports = { // yea, i really need to use module.exports. don't rage!
 	apps: [{ // pm2 launch settings
-		name: 'walle',
-		script: 'build/main.js', /// main file
+		name: 'wa',
+		script: 'build/wa.js', /// main file
 		node_args,
-		out_file: 'settings/log/output.txt', // only output log
-		error_file: 'settings/log/error.txt', // only error log
+		out_file: 'conf/log.txt',
 	}],
 }

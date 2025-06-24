@@ -11,7 +11,7 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, user, msg, args, sendUsage, t }: CmdCtx) {
+	async run({ bot, user, msg, args, send, sendUsage, t }: CmdCtx) {
 		const cmds = {
 			async list() {
 				const list = await prisma.reminders.findMany({ where: { author: user.id } }) // all user reminders
@@ -37,7 +37,7 @@ export default class extends Cmd {
 				if (pending) text += t('remind.pending', { pending })
 				if (done) text += t('remind.done', { done })
 
-				bot.send(msg, text.trim())
+				send(text.trim())
 				return
 			},
 			async delete() {
@@ -53,7 +53,7 @@ export default class extends Cmd {
 
 		// sendUsage if time is invalid, less than 1m or more than 1y
 		if (!matchMs[0] || matchMs[0] <= 59_999 || matchMs[0] >= 31_536_000_000) {
-			bot.send(msg, t('remind.limit'))
+			send(t('remind.limit'))
 			return
 		}
 
@@ -70,7 +70,5 @@ export default class extends Cmd {
 				remindAt: String(time),
 			},
 		})
-
-		bot.react(msg, 'ok')
 	}
 }

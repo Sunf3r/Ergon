@@ -6,15 +6,11 @@ const textTypes = {
 	'extendedTextMessage': 'text',
 }
 
-const visualNonStickerTypes = {
+const visualTypes = {
 	'ptvMessage': 'video',
 	'videoMessage': 'video',
 	'imageMessage': 'image',
 	'viewOnceMessageV2': 'image',
-}
-
-const visualTypes = {
-	...visualNonStickerTypes,
 	'stickerMessage': 'sticker',
 }
 
@@ -28,18 +24,19 @@ const coolTypes = { // Theses will be counted by group msgs counter
 	...textTypes,
 	...mediaTypes,
 	'contactMessage': 'contact',
-	'locationMessage': 'location',
-	'liveLocationMessage': 'location',
 }
 
 const allMsgTypes = { // all msg types
 	...coolTypes,
+	'locationMessage': 'location',
+	'liveLocationMessage': 'location',
 	'call': 'call', // contains only callKey
 	'callLogMesssage': 'callLog', // when a call ends
 	'reactionMessage': 'reaction',
 	'pinInChatMessage': 'pin',
 	'eventMessage': 'event', // group events
 	'protocolMessage': 'protocol', // delete msgs
+	'albumMessage': 'album', // contains multiple media msgs
 
 	// API Bots
 	'buttonsMessage': 'button',
@@ -53,23 +50,11 @@ const allMsgTypes = { // all msg types
 	'pollUpdateMessage': 'pollUpdate',
 }
 
-const visualNonStickerValues = Object.values(visualNonStickerTypes)
 const visualValues = Object.values(visualTypes)
 const coolValues = Object.values(coolTypes)
 const mediaValues = Object.values(mediaTypes)
 
 const isMedia = (type: MsgTypes) => mediaValues.includes(type)
 const isVisual = (type: MsgTypes) => visualValues.includes(type)
-const isVisualNonSticker = (type: MsgTypes) => visualNonStickerValues.includes(type)
 
-export {
-	allMsgTypes,
-	coolTypes,
-	coolValues,
-	isMedia,
-	isVisual,
-	isVisualNonSticker,
-	mediaTypes,
-	textTypes,
-	visualTypes,
-}
+export { allMsgTypes, coolTypes, coolValues, isMedia, isVisual, mediaTypes, textTypes, visualTypes }

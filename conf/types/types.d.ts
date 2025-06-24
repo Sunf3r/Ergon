@@ -1,13 +1,7 @@
-import { Baileys, Cmd, Group, User } from '../../map.ts'
+import { Baileys, Cmd, emojis, Group, User } from '../../map.ts'
 import { ChatSession } from '@google/generative-ai'
+import { AnyMessageContent, proto } from 'baileys'
 import { TFunction } from 'i18next'
-import { proto } from 'baileys'
-import pino, { LoggerExtras, LoggerOptions } from 'pino'
-
-type Logger<Options = LoggerOptions> =
-	& pino.BaseLogger
-	& LoggerExtras<Options>
-	& CustomLevelLogger<Options>
 
 type MsgTypes =
 	| 'text'
@@ -46,13 +40,12 @@ type MediaMsg =
 interface Msg {
 	chat: str
 	author: str
-	edited: bool
 	text: str
 	type: MsgTypes
-	isMedia: bool
+	hasMedia: bool
 	mime: str
 	isBot: bool
-	quoted: Msg
+	quoted?: Msg
 	message: MediaMsg | null
 	key: proto.IMessageKey
 }
@@ -64,8 +57,11 @@ interface CmdCtx {
 	bot: Baileys
 	args: str[]
 	cmd: Cmd
+	startTyping(): Promise<void>
+	send(str: str | AnyMessageContent): Promise<CmdCtx>
+	react(emoji: str | ReturnType<typeof emojis>): Promise<void>
+	deleteMsg(): Promise<void>
 	t: TFunction<'translation', undefined>
-	sendUsage(): Promise<void>
 }
 
 interface GroupMsg {
@@ -74,4 +70,29 @@ interface GroupMsg {
 	count: num
 }
 
-export { aiPrompt, CmdCtx, GroupMsg, Lang, Logger, MediaMsg, Msg, MsgTypes }
+type GoogleFile = {
+	data: Buffer
+	mime: str
+}
+type GeminiArgs = {
+	model?: num
+	input: str
+	user: User
+	chat?: str
+	callBack?: Func
+	args: any[]
+	file?: GoogleFile
+}
+
+// user typescript schema
+type UserSchema = {
+	id: num
+	phone: str
+	name: str | null
+	lang: str | null
+	prefix: str | null
+	cmds: num | null
+	memories: str | null
+}
+
+export { CmdCtx, GeminiArgs, GoogleFile, GroupMsg, MediaMsg, Msg, MsgTypes, UserSchema }

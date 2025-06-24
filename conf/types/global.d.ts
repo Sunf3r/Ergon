@@ -8,41 +8,33 @@ type Func = Function
 declare function print(...args: any[]): void
 
 interface String {
-	getUrl(): str[] | null
+	align(limit: num, char?: str, endPosition?: bool): str
+	toMs(): [num, str[]]
+	getUrl(): str[] | undefined
 	encode(): str
 	parsePhone(): str
 	toPascalCase(): str
-	align(limit: num, char?: str, endPosition?: bool): str
 	t(lang: str, options?: any): str
 	filterForRegex(): str
-	toMs(): [num, str[]]
 	bold(): str
 }
 
 interface Number {
-	bytes(onlyNumbers?: bool): str | num
+	bytes(): str
 	duration(ms?: bool): str
 }
 
-interface Reminder {
+// alarm database typescript schema
+type Alarm = {
 	id: num
 	author: num
 	chat: str
 	msg: str
-	remindAt: str
-	isDone: bool
+	time: str
+	status: int
 }
 
-interface aiPrompt {
-	instruction?: str
-	prompt: str | [Part, str]
-	model?: str
-	buffer?: Buf
-	mime?: str
-	user?: User
-}
+type AIMsg = { header: str; text: str; tokens: num; thoughts: num }
 
-interface aiResponse {
-	text: str
-	tokens?: num
-}
+type Lang = 'py' | 'lua' | 'node' | 'deno' | 'bun' | 'zsh' | 'cpp'
+// supported programming languages

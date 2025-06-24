@@ -7,12 +7,12 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ t, bot, args, msg, user, sendUsage }: CmdCtx) {
-		if (!languages.includes(args[0])) return sendUsage()
+	async run({ t, args, send, user }: CmdCtx) {
+		if (!languages.includes(args[0])) return send('usage.language')
 
 		user.lang = args[0]
 
-		bot.send(msg, t('language.changed', { lng: user.lang }))
+		send(t('language.changed', { lng: user.lang }))
 		return
 	}
 }

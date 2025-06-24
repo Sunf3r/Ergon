@@ -1,3 +1,4 @@
+import { getUser } from '../../plugin/prisma.js'
 import { Cmd, CmdCtx } from '../../map.js'
 
 export default class extends Cmd {
@@ -11,7 +12,7 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ bot, msg, group, t }: CmdCtx) {
+	async run({ bot, send, group, t }: CmdCtx) {
 		let text = `*[🏆] - Rank*\n\n`
 
 		const msgs = await group!.getCountedMsgs()
@@ -19,7 +20,7 @@ export default class extends Cmd {
 		for (const i in msgs) {
 			const { author, count } = msgs[i]
 
-			const user = await bot.getUser({ id: author })
+			const user = await getUser({ id: author })
 
 			text += t('rank.msgs', {
 				position: Number(i) + 1,
@@ -28,7 +29,7 @@ export default class extends Cmd {
 			})
 		}
 
-		bot.send(msg, text)
+		send(text)
 		return
 	}
 }

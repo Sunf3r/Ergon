@@ -1,6 +1,7 @@
-import { cleanTemp, Cmd, CmdCtx, delay, isEmpty, Lang, prisma, runCode, runner } from '../../map.js'
+import { Cmd, CmdCtx, defaults, delay, isEmpty, prisma, runCode } from '../../map.js'
+import cache from '../../plugin/cache.js'
 import { inspect } from 'node:util'
-import baileys from 'baileys'
+import bot from '../../wa.js'
 
 export default class extends Cmd {
 	constructor() {
@@ -12,41 +13,39 @@ export default class extends Cmd {
 	}
 
 	async run(ctx: CmdCtx) {
-		const { args, bot, msg, user, group, cmd, t, sendUsage } = ctx
-		const langs = Object.keys(runner)
+		const { args, bot, msg, user, group, cmd, t, send, react, startTyping } = ctx
+		const langs = Object.keys(defaults.runner)
 		// all supported programming languages
 
 		// Language to be runned
-		const lang: Lang = langs.includes(args[0]) ? args.shift() : 'eval'
-		const code = args.join(' ')
-		let output, startTime: num
-		// await bot.react(msg, 'loading')
+		const lang = langs.includes(args[0]) ? args.shift() as Lang : 'eval'
+		const startTime = Date.now() // start time for execution duration
+		let output = '' // output of the code execution
 
 		if (lang === 'eval') {
 			let evaled // run on this thread
 			prisma
 			delay // i may need it, so TS won't remove from build if it's here
-			baileys
 			isEmpty
+			cache
+			bot
 
 			try {
 				/** Dynamic async eval: put code on async function if it includes 'await'
 				 * you will need to use 'return' on the end of your code
 				 * if you want to see a returned value
 				 */
-				evaled = code.includes('await')
-					? await eval(`(async () => { ${code} })()`)
-					: await eval(code!)
+				evaled = args.includes('await')
+					? await eval(`(async () => { ${args.join(' ')} })()`)
+					: await eval(args.join(' '))
 			} catch (e: any) {
-				evaled = e.message
+				evaled = e.message || e
 			}
 
 			output = inspect(evaled, { depth: null })
 			// inspect output: stringify obj to human readable form
 		} else {
-			startTime = Date.now()
-
-			output = await runCode(lang, code)
+			output = await runCode(lang, args.join(' '))
 			// runCode: run on a child process
 		}
 
@@ -54,13 +53,10 @@ export default class extends Cmd {
 		const duration = (Date.now() - startTime!).duration(true)
 		const RAM = process.memoryUsage().rss.bytes() // current RAM usage
 
-		if (output === 'undefined') output = ''
-		else output = '\n' + output.trim()
+		const text = `\`$ ${duration}/${RAM}\`` +
+			(output === 'undefined' ? '' : '\n' + output.trim())
 
-		const text = `\`$ ${duration}/${RAM}\`` + output
-
-		await bot.send(msg, text)
-		// bot.react(msg, 'ok')
+		send(text)
 		return
 	}
 }

@@ -1,23 +1,21 @@
-# ⭐ WALL-E 🤖 ⭐
+# ⭐ Ergon 🤖 ⭐
 
-### ✨ WALL-E is a WhatsApp chat bot with some cool features. ✨
+### ✨ Ergon is a WhatsApp chat bot with some cool features. ✨
 
-> ⚠️ » _WALL-E is still under development, feel free to contribute to this repo and leave a_ ⭐
+> ⚠️ » _Ergon is still under development, feel free to contribute to this repo and leave a_ ⭐
 
 ---
 
 # 🤔 What do you mean by "cool features"?:
 
+- [x] Talk to Gemini AI with searching, memories and alarms;
 - [x] Translate text;
-- [x] Talk to Gemini AI;
-- [x] Search on Google;
 - [x] Speak in 5 languages;
-- [x] Set reminders for yourself;
 - [x] Reveal view once messages;
 - [x] Change its prefix just for you;
 - [x] Remove background from stickers;
 - [x] Rank members by sent msgs count;
-- [x] Create stickers with photos and gifs;
+- [x] Create stickers with photos and videos;
 - [x] Mass delete group msgs for all members;
 - [x] Mention all users in a group in a single msg;
 - [x] Run code in multiple programming languages;
@@ -29,7 +27,7 @@
 
 ### `1 -` 🛠️ Install runtimes and tools:
 
-- [NodeJS 💩](https://nodejs.org/pt-br/) (For WALL-E)
+- [NodeJS 💩](https://nodejs.org/pt-br/) (For Ergon)
 
 > 🪧 » _Recommended version: 22 or higher_
 
@@ -37,10 +35,10 @@
 
 - [PostgreSQL 🐘](https://www.postgresql.org/download/) (For database)
 
-> 🪧 » _Recommended version: 16 or higher_
-> Some cmds may require a database to work (e.g. rank/remind) or to set language/prefix permanently. but WALL-E works ok with no db.
+> 🪧 » _Recommended version: 16 or higher_ Some cmds may require a database to work (e.g.
+> rank/alarm) or to set language/prefix permanently. but Ergon works ok with no db.
 
-- FFMPEG (For gif stickers)
+- FFMPEG (For video stickers)
 
 > 🪧 » Run `sudo apt install ffmpeg` to install it on Debian/Ubuntu
 
@@ -48,7 +46,7 @@
 
 > 🪧 » _Recommended version: 3.12 or higher_
 
-**WALL-E also support these languages, but you DON'T need to install it if you won't use:**
+**Ergon also support these languages, but you DON'T need to install it if you won't use:**
 
 - [BUN 🧁](https://bun.sh)
 
@@ -73,55 +71,46 @@
 
 # or
 # Clone this repo
-git clone https://github.com/Sunf3r/WALL-E # You need to have git installed to run this cmd
+git clone https://github.com/Sunf3r/Ergon # You need to have git installed to run this cmd
 ```
 
 ### `3 -` 🌿 Preparing the environment:
 
-You can configure the bot however you want in the following files:
+- `.env` (`conf/.env.example`)
 
-- `settings.json` (`settings/settings.json`)
+> 💡 » _Set sensitive keys and **rename "`.env.example`" to "`.env`"**_. if you have a database,
+> remove the # before DATABASE_URL and fill the URL.
+
+```
+DATABASE_URL="postgresql://role:password@host:port/db"
+DEVS="number01|number02|number03"
+GEMINI="get a key on https://aistudio.google.com/app/apikey"
+```
+
+You can set default configuration:
+
+- `defaults.json` (`conf/defaults.json`)
 
 ```json
 {
-	"bot": {
-		"link": "dsc.gg/wallebot", // support channel link
-		"region": {
-			"timezone": "America/Sao_Paulo",
-			"logLanguage": "pt"
-		}
-	},
-
-	"sticker": {
-		"packName": ["pack", "name"], // sticker pack name
-		"author": ["wall-e", "sticker maker"] // sticker author name
-	},
-
-	"db": {
-		"user": {
-			"prefix": ".", // default prefix to new users
-			"language": "pt", // default language to new users
-			"cacheLimit": 500, // max users in memory
-			"msgsLimit": 200 // max msgs in memory (per user)
-		},
-		"group": {
-			"msgsLimit": 200 // max msgs in memory (per group)
-		}
+	"lang": "pt", // bot default language
+	"prefix": ".", // bot default prefix
+	"timezone": "America/Sao_Paulo", // logs timezone
+	"cache": {
+		"users": 200, // max users in cache
+		"groups": 200, // max groups in cache
+		"dmMsgs": 10, // max msgs per DM chat
+		"groupMsgs": 200 // max msgs per group
 	}
 }
 ```
-
-- `.env` (`settings/.env.example`)
-
-> 💡 » _Set sensitive keys and rename "`.env.example`" to "`.env`"_.
-> if you have a database, remove the # before DATABASE_URL and fill the URL.
 
 ### `3 -` 🧰 Installing dependencies and starting 🚀:
 
 > 💡 » _Open the folder in terminal_
 
 ```bash
-cd WALL-E
+cd Ergon
 
 # This script will do everything to prepare the bot for
 # **the first time**, *but you need to do steps 1~3 first*
@@ -131,12 +120,12 @@ npm run setup
 # generate prisma schema, build source,
 # create python virtual environment,
 # install python dependencies,
-# and >start walle< with pm2
+# and >start the bot< with pm2
 
 # if you have a database, run this one after setup. it will also push db schema 
 npm run setup:full
 
-# To stop WALL-E:
+# To stop Ergon:
 npm run stop
 
 # To start it again:
@@ -149,7 +138,7 @@ npm start
 
 ## Just scan the QR Code that will appear on terminal and then it's ready!
 
-> ⚠️ » All logs and QR codes will appear on `settings/logs/output.txt`.
+> ⚠️ » All logs and QR codes will appear on `conf/log.txt`.
 
 # `-1.` 🗒️ Important Notes:
 
@@ -165,6 +154,7 @@ npm run update
 # update node modules, update deno and bun,
 # update python dependencies, generate prisma schema,
 # and rebuild source.
+
 # update won't start services.
 
 # Starting services
@@ -177,12 +167,11 @@ npm start
 - I recommend you to reset and log out WhatsApp Web sometimes to fix decrypt bugs
 
 ```
-# Stopping services
-npm run stop
-# Cleaning auth, cache, temp and logs
-npm run reset
-# Starting all services
-npm start
+npm run stop # Stopping services
+
+npm run reset # Cleaning auth, cache and temp
+
+npm start # Starting all services
 # Scan QR Code
 ```
 
@@ -192,6 +181,6 @@ npm start
 - This bot was made to run on Linux, but you can run it on Windows just changing script or using
   WSL.
 
-- If you need help, feel free to ask me on Discord.
+- If you need help, feel free to ask me on Discord (it's in my profile).
 
-### I Hope you like the project :)
+### I hope you like it :)

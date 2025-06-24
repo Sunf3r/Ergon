@@ -1,9 +1,11 @@
-import { Baileys, checkPermissions, CmdCtx, delay, getCtx } from '../../map.js'
+import { deleteMessage, react, send, startTyping } from '../../util/messages.js'
+import { CmdCtx, delay, getCtx } from '../../map.js'
 import { type proto } from 'baileys'
 import { getFixedT } from 'i18next'
+import bot from '../../wa.js'
 
 // messages upsert event
-export default async function (bot: Baileys, raw: { messages: proto.IWebMessageInfo[] }, e: str) {
+export default async function (raw: { messages: proto.IWebMessageInfo[] }, event: str) {
 	// raw.messages = []
 
 	// sometimes you can receive more then 1 message per trigger, so use for
@@ -11,85 +13,60 @@ export default async function (bot: Baileys, raw: { messages: proto.IWebMessageI
 		if (!m?.message) continue
 
 		// get abstract msg obj
-		const context = await getCtx(m, bot)
-		if (!context.msg) continue
-		const { msg, args, cmd, group, user } = context
+		const { msg, args, cmd, group, user } = await getCtx(m)
+		if (!user || !msg) continue
 
-		if (!user || !msg) return
-		if (group) {
-			group.msgs.add(msg.key.id!, msg)
-			if (!msg.isBot) group.countMsg(user.id)
-			// count msgs with cool values for group msgs rank cmd
-		} else user.msgs.add(msg.key.id!, msg)
-
-		// run functions waiting for msgs (waitFor)
-		if (bot.cache.wait.has(e)) {
-			bot.cache.wait.forEach((f: Function) => {
-				try {
-					f(bot, msg, user, group)
-				} catch (e) {
-					console.error(e, `EVENT/${e}/waitFor`)
-				}
-			})
-		}
+		/* * Messages counting & storing */
+		if (group) group.countMsg(user, msg) // count msgs with cool values for group msgs rank cmd
+		else user.msgs.add(msg.key.id!, msg)
 
 		if (!cmd) continue
 		// get locales function
 		const t = getFixedT(user.lang)
+		const reactToMsg = react.bind(msg)
+		const sendMsg = send.bind(msg.chat)
 
-		// Check cmd permissions
-		const auth = checkPermissions(cmd, user, group)
-		if (auth !== true) {
-			if (auth === 'nodb') bot.send(msg, t('events.nodb'))
-			bot.react(msg, auth)
-			continue // you got censored OOOOMAGAAAA
-		}
+		/* * Cmd permissions checking */
+		const auth = cmd.checkPerms(msg, user, group)
+		if (auth !== true) continue // you got censored OOOOMAGAAAA
 
 		const ctx: CmdCtx = {
-			sendUsage, // sends cmd help menu
 			group,
 			args,
 			user,
 			bot,
 			cmd,
+			startTyping: startTyping.bind(msg.chat),
+			send: sendMsg,
+			react: reactToMsg,
+			deleteMsg: deleteMessage.bind(msg),
 			msg,
 			t,
 		}
 
+		/* * Cooldown checking */
 		const now = Date.now()
-		const cooldown = cmd.cooldown * 1_000
-		if (user.lastCmd.delay > now) {
-			user.lastCmd.delay += cooldown
-			const timeout = user.lastCmd.delay - now
+		if (user.delay > now) {
+			user.delay += cmd.cooldown
+			const timeout = user.delay - now
 
-			await bot.send(msg, t('events.cooldown', { time: timeout.duration(true) }))
-			// warns user about cooldown
-			if (timeout / 2 < cooldown) await bot.react(msg, 'clock')
+			if (user.delay - Date.now() < 10_000) {
+				await sendMsg(t('events.cooldown', { time: timeout.duration(true) }))
+				// warns user about cooldown
+			}
 
 			await delay(timeout)
 			// wait until it gets finished
-		} else user.lastCmd.delay = now + cooldown
+		} else user.delay = now + cmd.cooldown
 
 		user.addCmd() // 1+ on user personal cmds count
 
-		// start typing (expires after about 10 seconds.)
-		// bot.sock.sendPresenceUpdate('composing', msg.chat);
-
 		Promise.resolve(cmd.run!(ctx))
 			.catch(async (e) => {
-				console.error(e, `EVENT/${e}`)
-				await bot.send(msg, `[⚠️] ${e?.message || e}`)
-				bot.react(msg, 'x')
+				print(`EVENT/${event}`, e, 'red')
+				sendMsg(`[⚠️] ${e?.message || e}`)
+				return
 			})
-
-		// sendUsage: sends cmd help menu
-		async function sendUsage() {
-			args[0] = cmd.name
-
-			await bot.cache.cmds.get('help').run(ctx)
-			bot.react(msg, '🤔')
-			return
-		}
 	}
 	return
 }

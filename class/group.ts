@@ -1,13 +1,13 @@
-import { Baileys, Collection, db, Msg, prisma } from '../map.js'
+import { Collection, defaults, Msg, prisma, User } from '../map.js'
 import { GroupMetadata, GroupParticipant } from 'baileys'
 
 export default class Group {
 	id: str
 	owner?: str
 	name: str
-	// nameTimestamp?: num;
+	nameTimestamp?: num
 	// group name modification date
-	// creation?: num;
+	creation?: num
 	desc?: str
 	restrict?: bool
 	// restrict: is set when group only allows admins to change group settings
@@ -28,8 +28,9 @@ export default class Group {
 		// @ts-ignore Shut up TypeScript
 		this.name = data.subject || data.name
 		// this.owner = g.owner
-		// this.nameTimestamp = g.subjectTime;
-		// this.creation = g.creation;
+		//@ts-ignore
+		this.nameTimestamp = data?.subjectTime || data?.nameTimestamp
+		this.creation = data.creation
 		// this.desc = g.desc
 		this.restrict = data.restrict
 		this.announce = data.announce
@@ -40,24 +41,25 @@ export default class Group {
 		// @ts-ignore
 		this.invite = data.inviteCode || data.invite
 		this.author = data.author
-		this.msgs = new Collection(db.group.msgsLimit)
+		this.msgs = new Collection(defaults.cache.groupMsgs)
 
 		// @ts-ignore
 		this.msgs.iterate(data?.msgs)
 	}
 
-	async countMsg(author: num) { // +1 to group member msgs count
-		if (!process.env.DATABASE_URL) return
+	async countMsg(user: User, msg: Msg) { // +1 to group member msgs count
+		this.msgs.add(msg.key.id!, msg)
+		if (!process.env.DATABASE_URL || msg.isBot) return
 
 		await prisma.msgs.upsert({
 			where: {
 				author_group: {
-					author,
+					author: user.id,
 					group: this.id.parsePhone(),
 				},
 			},
 			create: { // create user counter
-				author,
+				author: user.id,
 				group: this.id.parsePhone(),
 			},
 			update: { // or add 1  to count
@@ -110,7 +112,7 @@ export default class Group {
 	// 	}
 
 	// 	for (const m of participants) {
-	// 		const user = await bot.getUser({ phone: m.phone })
+	// 		const user = await getUser({ phone: m.phone })
 	// 		user.admin = m.admin
 	// 		members.push(user)
 	// 	}
@@ -118,7 +120,7 @@ export default class Group {
 	// 	return members
 	// }
 
-	async checkData(bot: Baileys) {
+	async checkData() {
 		// this.members = await this.indexParticipants(this.members as any, bot)
 		// I don't save any data of groups, but I let this func here bc
 		// if some day I store groups data,

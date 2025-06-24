@@ -9,11 +9,10 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ args, bot, msg }: CmdCtx) {
+	async run({ args, send }: CmdCtx) {
 		const startTime = Date.now()
 		const code = args.join(' ')
 
-		bot.react(msg, 'loading')
 		let output = await runCode('zsh', code)
 		// runCode: run on a child process
 
@@ -23,8 +22,7 @@ export default class extends Cmd {
 
 		const text = `\`$ ${duration}/${RAM}\`\n` + output
 
-		bot.send(msg, text)
-		bot.react(msg, 'ok')
+		send(text)
 		return
 	}
 }

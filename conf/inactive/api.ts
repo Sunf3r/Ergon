@@ -1,5 +1,5 @@
 import { FileMetadataResponse, FileState, GoogleAIFileManager } from '@google/generative-ai/server'
-import { api, delay, makeTempFile, User } from '../map.js'
+import { defaults, delay, makeTempFile, User } from '../map.js'
 import {
 	GenerateContentResult,
 	GoogleGenerativeAI,
@@ -8,7 +8,7 @@ import {
 } from '@google/generative-ai'
 // import OpenAI from 'openai'
 
-export { gemini, xAI }
+export { gemini }
 
 async function gemini(
 	{ instruction, prompt, model, buffer, mime, user }: aiPrompt,
@@ -20,9 +20,8 @@ async function gemini(
 	let file: FileMetadataResponse // Prompt file
 	let result: GenerateContentResult // AI Result
 
-	// The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
 	const gemini = genAI.getGenerativeModel({
-		model: model || api.aiModel.gemini,
+		model: model || defaults.ai.gemini,
 		safetySettings: [{ // won't block any potential dangerous content
 			category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
 			threshold: HarmBlockThreshold.BLOCK_NONE,
@@ -86,10 +85,10 @@ async function gemini(
 	 * it also allows to use dynamic initial instructions, so Gemini language
 	 * can be switched as bot user language.
 	 */
-	const chat = gemini.startChat({ history: user.geminiCtx })
+	const chat = gemini.startChat({ history: user.gemini })
 	result = await chat.sendMessage(prompt)
 
-	user.geminiCtx = await chat.getHistory()
+	user.gemini = await chat.getHistory()
 
 	return {
 		text: result.response!.text().replaceAll('**', '*').replaceAll('##', '>'),
@@ -98,34 +97,34 @@ async function gemini(
 	}
 }
 
-async function xAI(user: User, prompt: str) {
-	if (!user.grok) user.grok = []
+// async function xAI(user: User, prompt: str) {
+// 	if (!user.grok) user.grok = []
 
-	user.grok.push({ role: 'user', content: prompt })
-	let data = {
-		messages: user.grok,
-		model: 'grok-beta',
-		stream: false,
-		temperature: 0,
-	}
+// 	user.grok.push({ role: 'user', content: prompt })
+// 	let data = {
+// 		messages: user.grok,
+// 		model: 'grok-beta',
+// 		stream: false,
+// 		temperature: 0,
+// 	}
 
-	const req = await fetch('https://api.x.ai/v1/chat/completions', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${process.env.XAI}`,
-		},
-		body: JSON.stringify(data),
-	})
+// 	const req = await fetch('https://api.x.ai/v1/chat/completions', {
+// 		method: 'POST',
+// 		headers: {
+// 			'Content-Type': 'application/json',
+// 			'Authorization': `Bearer ${process.env.XAI}`,
+// 		},
+// 		body: JSON.stringify(data),
+// 	})
 
-	const response = await req.json()
+// 	const response = await req.json()
 
-	const message = response.choices[0].message
-	delete message.refusal
+// 	const message = response.choices[0].message
+// 	delete message.refusal
 
-	user.grok.push(message)
-	return message.content
-}
+// 	user.grok.push(message)
+// 	return message.content
+// }
 
 // GPT is not supported anymore
 // async function gpt({ content, model }: aiPrompt) {
