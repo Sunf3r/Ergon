@@ -41,7 +41,7 @@ function print(...anyArgs: any) {
 	if (brightColors.includes(color)) color += 'Bright'
 
 	console.info(chalk.bold[color as 'red'](
-		`[ ${now('TT.SSS')} |${memory}|${args.shift().align(9)}] - ${args.shift()}`,
+		`[ ${now('TT.SSS')} |${memory}|${args?.shift()?.align(9)}] - ${args?.shift()}`,
 		...args,
 	))
 	return

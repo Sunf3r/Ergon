@@ -99,12 +99,13 @@ export default class extends Cmd {
 					quality,
 				})
 
-				if (target.type !== 'video') await randomDelay()
-					.then(async () => {
-						// send several crop types of the same sticker
-						await send(await metadata.toMessage())
-					})
-				else await send(await metadata.toMessage())
+				if (target.type !== 'video') {
+					await randomDelay()
+						.then(async () => {
+							// send several crop types of the same sticker
+							await send(await metadata.toMessage())
+						})
+				} else await send(await metadata.toMessage())
 			}
 
 			return

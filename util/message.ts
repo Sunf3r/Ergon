@@ -83,12 +83,12 @@ function getDownloadableData(raw: any, types: [MsgTypes, str], isMediaMsg: bool)
 	const oldMsg = msg[types[1]]
 	// @ts-ignore i need it
 	newObj[types[1]] = {
-		url: oldMsg.url,
-		directPath: oldMsg.directPath,
-		mediaKey: oldMsg.mediaKey,
-		thumbnailDirectPath: oldMsg.thumbnailDirectPath,
+		url: oldMsg?.url,
+		directPath: oldMsg?.directPath,
+		mediaKey: oldMsg?.mediaKey,
+		thumbnailDirectPath: oldMsg?.thumbnailDirectPath,
 	}
-
+	if (!oldMsg?.url) print('getDownloadableData', msg, 'red')
 	return newObj as MediaMsg
 }
 

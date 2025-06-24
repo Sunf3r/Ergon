@@ -1,0 +1,65 @@
+{
+	"lang": "pt",
+	"prefix": ".",
+	"timezone": "America/Sao_Paulo",
+	"ai": {
+		"gemini_chain": [
+			"gemini-2.0-flash-lite",
+			"gemini-2.0-flash",
+			"gemini-2.5-flash-preview-05-20"
+		],
+		"gemini_pro": "gemini-2.5-pro-preview-05-06"
+	},
+	"cache": {
+		"users": 200,
+		"groups": 200,
+		"dmMsgs": 10,
+		"groupMsgs": 200
+	},
+	"runner": {
+		"tempFolder": "settings/temp",
+		"py": {
+			"cmd": [
+				"settings/venv/bin/python3"
+			],
+			"ext": "py"
+		},
+		"lua": {
+			"cmd": [
+				"luajit"
+			],
+			"ext": "lua"
+		},
+		"node": {
+			"cmd": [
+				"node"
+			],
+			"ext": "js"
+		},
+		"deno": {
+			"cmd": [
+				"deno run -A"
+			],
+			"ext": "ts"
+		},
+		"bun": {
+			"cmd": [
+				"bun run"
+			],
+			"ext": "ts"
+		},
+		"zsh": {
+			"cmd": [
+				"zsh"
+			],
+			"ext": "sh"
+		},
+		"cpp": {
+			"cmd": [
+				"g++ -o settings/temp/main ",
+				"./settings/temp/main #"
+			],
+			"ext": "cpp"
+		}
+	}
+}

@@ -29,7 +29,6 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 		/* * Cmd permissions checking */
 		const auth = cmd.checkPerms(msg, user, group)
 		if (auth !== true) continue // you got censored OOOOMAGAAAA
-		
 
 		const ctx: CmdCtx = {
 			group,

@@ -39,7 +39,7 @@ export default class Baileys {
 				jid?.includes('broadcast') || jid?.includes('newsletter') ||
 				jid?.includes('13135550002@s.whatsapp.net'),
 		})
-	
+
 		// save login creds
 		this.sock.ev.on('creds.update', saveCreds)
 		return

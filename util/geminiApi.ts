@@ -4,7 +4,7 @@ import { GeminiArgs, GoogleFile } from '../conf/types/types.js'
 import { createMemories } from '../plugin/memories.js'
 import { defaults, delay, User } from '../map.js'
 
-const GoogleAI = new GoogleGenAI({ apiKey: defaults.ai.gemini_key })
+const GoogleAI = new GoogleGenAI({ apiKey: process.env.GEMINI })
 
 export default async function gemini(
 	{ input, user, chat, file, callBack, args, model = 2 }: GeminiArgs,

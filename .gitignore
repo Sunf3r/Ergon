@@ -5,7 +5,6 @@ cache
 *.env
 test
 cookies.txt
-defaults.json
 
 # Builds
 build
@@ -14,5 +13,3 @@ node_modules
 # Logs / Lock
 log.txt
 temp
-*lock*
-*.lock*

@@ -1,4 +1,4 @@
-import { defaults, Group, type CmdCtx, type Msg, type User } from '../map.js'
+import { type CmdCtx, Group, type Msg, type User } from '../map.js'
 import { react, send } from '../util/messages.js'
 
 export default abstract class Cmd {
@@ -37,7 +37,7 @@ export default abstract class Cmd {
 		const reactMsg = react.bind(msg)
 		const sendMsg = send.bind(msg.chat)
 
-		const isDev = defaults.devs.includes(user.phone)
+		const isDev = process.env.DEVS!.includes(user.phone)
 		// if a normal user tries to run a only-for-devs cmd
 
 		if (this.access.restrict && !isDev) return reactMsg('prohibited')
@@ -55,7 +55,7 @@ export default abstract class Cmd {
 		// if there's no group and cmd can't run on DM
 
 		if (this.access.needsDb && !process.env.DATABASE_URL) return sendMsg('events.nodb')
-		
+
 		// if cmd requires database to run
 		return true
 	}
