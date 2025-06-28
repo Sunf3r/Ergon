@@ -4,18 +4,22 @@ export default class extends Cmd {
 	constructor() {
 		super({
 			cooldown: 10_000,
+			access: {
+				groups: true,
+				dm: false,
+			},
 			subCmds: ['reverse'],
 		})
 	}
 
-	async run({ msg, args, send, deleteMsg, group, t }: CmdCtx) {
+	async run({ msg, args, send, deleteMsg, user, group, t }: CmdCtx) {
 		group = group!
 		let disclaimerMsg
 		const amount = Number(args[0]) // amount of msgs to be deleted for everyone-
 
 		if (amount === 0) return send(t('clean.noAmount'))
 
-		if (!isValidPositiveIntenger(amount)) return send('usage.clean')
+		if (!isValidPositiveIntenger(amount)) return send('usage.clean', user)
 
 		if (group.msgs.size < amount) {
 			disclaimerMsg = await send(t('clean.deleted', { msgsSize: group.msgs.size }))

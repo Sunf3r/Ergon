@@ -6,7 +6,7 @@ export default class extends Cmd {
 	}
 
 	async run({ t, user, send, args }: CmdCtx) {
-		if (!args[0] || args[0].length > 3) return send('usage.prefix')
+		if (!args[0] || args[0].length > 3) return send('usage.prefix', user)
 
 		user.prefix = args[0]
 

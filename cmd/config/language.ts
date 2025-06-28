@@ -8,7 +8,7 @@ export default class extends Cmd {
 	}
 
 	async run({ t, args, send, user }: CmdCtx) {
-		if (!languages.includes(args[0])) return send('usage.language')
+		if (!languages.includes(args[0])) return send('usage.language', user)
 
 		user.lang = args[0]
 

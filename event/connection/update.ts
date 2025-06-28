@@ -11,6 +11,7 @@ export default async function (event: Partial<ConnectionState>) {
 	const disconnection = event.lastDisconnect?.error as any
 	const exitCode = disconnection?.output?.statusCode
 	// disconnection code
+	print('event', event)
 
 	if (event.qr) {
 		print(await QRCode.toString(event.qr, { type: 'terminal' }))
@@ -42,6 +43,12 @@ export default async function (event: Partial<ConnectionState>) {
 		case 'close':
 			print('CLOSED', `Reason (${exitCode}): ${disconnection}`, 'blue')
 
+			print('is closed?', bot.sock.ws.isClosed)
+			print('is open?', bot.sock.ws.isOpen)
+			setTimeout(() => {
+				print('is closed?', bot.sock.ws.isClosed)
+				print('is open?', bot.sock.ws.isOpen)
+			}, 15_000)
 			const reconnect = shouldReconnect(exitCode)
 
 			// reconnect if it's not a logout
@@ -53,9 +60,11 @@ export default async function (event: Partial<ConnectionState>) {
 
 				const now = Date.now()
 				lastLogins.add(now, now)
-				bot.connect()
-				// start()
+				// bot.connect()
+				start()
+				return
 			}
+			print('WA', 'Logged out', 'red')
 			return
 	}
 	return

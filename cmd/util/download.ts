@@ -10,11 +10,11 @@ export default class extends Cmd {
 		})
 	}
 
-	async run({ msg, args, react, send }: CmdCtx) {
+	async run({ msg, args, react, user, send }: CmdCtx) {
 		let url = msg.text.getUrl()
 
 		if (!url) url = msg?.quoted?.text?.getUrl()
-		if (!url) return send('usage.download')
+		if (!url) return send('usage.download', user)
 
 		let type: 'video' | 'audio' = 'video'
 		if (args[0] === 'a') {
