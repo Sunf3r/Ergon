@@ -45,7 +45,7 @@ export default class extends Cmd {
 			await runCode('zsh', `${defaults.runner.ytdlp} ${cliArgs.join(' ')} "${url}"`)
 
 			Object.setPrototypeOf(data, {
-				[type]: readFileSync(path)
+				[type]: readFileSync(path),
 			})
 
 			//@ts-ignore

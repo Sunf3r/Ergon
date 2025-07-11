@@ -1,5 +1,6 @@
 import { deleteMessage, react, send, startTyping } from '../../util/messages.js'
 import { CmdCtx, delay, getCtx } from '../../map.js'
+import { getUser } from '../../plugin/prisma.js'
 import { type proto } from 'baileys'
 import { getFixedT } from 'i18next'
 import bot from '../../wa.js'
@@ -18,7 +19,10 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 
 		/* * Messages counting & storing */
 		if (group) group.countMsg(user, msg) // count msgs with cool values for group msgs rank cmd
-		else user.msgs.add(msg.key.id!, msg)
+		else {
+			const chat = await getUser({ phone: msg.chat })
+			chat!.msgs.add(msg.key.id!, msg)
+		}
 
 		if (!cmd) continue
 		// get locales function

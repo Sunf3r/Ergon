@@ -74,6 +74,6 @@ async function getGroup(id: str): Promise<Group> {
 	// group does not exist on WA, so return undefined
 
 	group = new Group(data)
-	cache.groups.set(group.id, group)
+	cache.groups.add(group.id, group)
 	return group
 }

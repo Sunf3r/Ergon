@@ -17,7 +17,7 @@ class CacheManager {
 	wait: Collection<str, Func>
 	users: Collection<num, User>
 	events: Map<str, Func>
-	groups: Map<str, Group>
+	groups: Collection<str, Group>
 	timeouts: Map<str, NodeJS.Timeout>
 
 	constructor() {
@@ -30,7 +30,7 @@ class CacheManager {
 		// Users collection
 		this.users = new Collection(100)
 		// Groups collection
-		this.groups = new Map()
+		this.groups = new Collection(100)
 		// Timeouts
 		this.timeouts = new Map()
 	}
