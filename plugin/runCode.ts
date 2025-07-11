@@ -14,7 +14,7 @@ export default async function runCode(lang: Lang, code = '', file: str = '') {
 		} else {
 			data = defaults.runner[lang]
 
-			file = `${defaults.runner.tempFolder}/exec.${data.ext}` // file path
+			file = `${defaults.runner.tempFolder}exec.${data.ext}` // file path
 			await writeFile(file, code) // write file
 			code = ''
 			// don't write code in CLI to prevent issues

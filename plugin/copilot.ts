@@ -11,7 +11,7 @@
 import $ from 'dax'
 
 const controller = new AbortController()
-const node_args = ['--expose-gc', '--no-warnings', '--env-file=settings/.env'].join(' ')
+const node_args = ['--expose-gc', '--no-warnings', '--env-file=conf/.env'].join(' ')
 const receipes = { // integrated scripts
 	out: { cmd: 'npm outdated' },
 	up: { cmd: 'npm run update' },
@@ -21,7 +21,7 @@ const receipes = { // integrated scripts
 	wa: { cmd: `node ${node_args} build/main.js` },
 	ru: { cmd: `node ${node_args} build/plugin/runner.js}` },
 	re: { cmd: `node ${node_args} build/plugin/reminder.js}` },
-	pms: { cmd: 'pm2 start settings/ecosystem.config.cjs --attach' },
+	pms: { cmd: 'pm2 start conf/ecosystem.config.cjs --attach' },
 }
 
 const cmds = { // like a CLI

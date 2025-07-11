@@ -17,10 +17,10 @@
 		"groupMsgs": 200
 	},
 	"runner": {
-		"tempFolder": "settings/temp",
+		"tempFolder": "conf/temp/",
 		"py": {
 			"cmd": [
-				"settings/venv/bin/python3"
+				"conf/venv/bin/python3"
 			],
 			"ext": "py"
 		},
@@ -56,8 +56,8 @@
 		},
 		"cpp": {
 			"cmd": [
-				"g++ -o settings/temp/main ",
-				"./settings/temp/main #"
+				"g++ -o conf/temp/main ",
+				"./conf/temp/main #"
 			],
 			"ext": "cpp"
 		}
