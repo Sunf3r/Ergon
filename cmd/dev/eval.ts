@@ -2,7 +2,7 @@ import { Cmd, CmdCtx, defaults, delay, isEmpty, prisma, runCode } from '../../ma
 import { readFile, writeFile } from 'node:fs/promises'
 import cache from '../../plugin/cache.js'
 import { inspect } from 'node:util'
-import fs from "node:fs/promises"
+import fs from 'node:fs/promises'
 import bot from '../../wa.js'
 
 export default class extends Cmd {
@@ -15,7 +15,7 @@ export default class extends Cmd {
 	}
 
 	async run(ctx: CmdCtx) {
-		const { args, bot, msg, user, group, cmd, t, send, react, startTyping } = ctx
+		const { args, msg, user, group, cmd, t, send, react, startTyping } = ctx
 		const langs = Object.keys(defaults.runner)
 		// all supported programming languages
 
@@ -26,13 +26,14 @@ export default class extends Cmd {
 
 		if (lang === 'eval') {
 			let evaled // run on this thread
-			prisma
-			delay // i may need it, so TS won't remove from build if it's here
-			isEmpty
-			cache
-			bot
 			writeFile
 			readFile
+			isEmpty
+			prisma
+			delay // i may need it, so TS won't remove from build if it's here
+			cache
+			bot
+			fs
 
 			try {
 				/** Dynamic async eval: put code on async function if it includes 'await'

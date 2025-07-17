@@ -46,8 +46,8 @@ async function getCtx(raw: proto.IWebMessageInfo): Promise<CmdCtx> {
 		quoted: await getQuoted(raw, group! || user), // quoted msg
 		isBot,
 		mime,
+		isEdited: !!findKey(message, 'editedMessage'),
 		key,
-		// edited: Object.keys(message!)[0] === 'editedMessage', // if the msg is edited
 	}
 
 	let args: str[] = []

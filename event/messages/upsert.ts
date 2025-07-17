@@ -19,10 +19,13 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 		if (!user || !msg) continue
 
 		/* * Messages counting & storing */
-		if (group) group.countMsg(user, msg) // count msgs with cool values for group msgs rank cmd
-		else {
-			const chat = await getUser({ phone: msg.chat })
-			chat!.msgs.add(msg.key.id!, msg)
+		if (!msg.isEdited) {
+			// count msgs with valid types for group msgs rank cmd
+			if (group) group.countMsg(user, msg)
+			else { // store msgs for searching images on sticker cmd
+				const chat = await getUser({ phone: msg.chat })
+				chat!.msgs.add(msg.key.id!, msg)
+			}
 		}
 
 		if (!cmd) continue
@@ -39,7 +42,6 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 			group,
 			args,
 			user,
-			bot,
 			cmd,
 			startTyping: startTyping.bind(msg.chat),
 			send: sendMsg,

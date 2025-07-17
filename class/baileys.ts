@@ -15,10 +15,6 @@ export default class Baileys {
 	}
 
 	async connect() {
-		// Fetch latest WA version
-		// const { version } = await fetchLatestBaileysVersion()
-		/** WA is showing fake versions to ban bots. DO NOT UNCOMMENT IT */
-
 		// Use saved session
 		const { state, saveCreds } = await useMultiFileAuthState(this.auth)
 
@@ -29,7 +25,6 @@ export default class Baileys {
 				keys: makeCacheableSignalKeyStore(state.keys, logger),
 			},
 			logger,
-			version: [2, 3000, 1023223821], // await fetchLatestBaileysVersion(),
 			markOnlineOnConnect: false,
 			browser: Browsers.macOS('Desktop'),
 			syncFullHistory: false,

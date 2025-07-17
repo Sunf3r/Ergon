@@ -33,6 +33,7 @@ interface Msg {
 	mime: str
 	isBot: bool
 	quoted?: Msg
+	isEdited: bool
 	key: proto.IMessageKey
 }
 
@@ -40,7 +41,6 @@ interface CmdCtx {
 	msg: Msg
 	user: User
 	group: Group | undefined
-	bot: Baileys
 	args: str[]
 	cmd: Cmd
 	startTyping(): Promise<void>
