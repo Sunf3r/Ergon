@@ -6,21 +6,29 @@ import { ParticipantAction } from 'baileys'
  * is promoted or demoted on a group.
  */
 export default async function (groupEvent: Event) {
-	if (!['promote', 'demote'].includes(groupEvent.action)) return
-
 	const group = await getGroup(groupEvent.id)
 	if (!group) return
+	const participant = groupEvent.participants[0]
 
-	const member = group.members.find((m) => m.id === groupEvent.author)
-	if (!member) return
-
-	const actions: { demote: null; promote: 'admin' } = {
-		demote: null,
-		promote: 'admin',
+	switch (groupEvent.action) {
+		case 'promote': {
+			const member = group.members.find((m) => m.id === participant)
+			member!.admin = 'admin'
+			return
+		}
+		case 'demote': {
+			const member = group.members.find((m) => m.id === participant)
+			member!.admin = null
+			return
+		}
+		case 'add':
+			group.members.push({ id: participant, admin: null })
+			return
+		case 'remove':
+			group.members = group.members.filter((m) => m.id !== participant)
+			return
 	}
-
-	// update cache
-	member.admin = actions[groupEvent.action as 'demote']
+	return
 }
 
 interface Event {

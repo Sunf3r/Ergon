@@ -17,7 +17,7 @@ export default class extends Cmd {
 		await randomDelay()
 
 		const msgObj = {
-			caption: media.target.text.encode()
+			caption: media.target.text.encode(),
 		} as AnyMessageContent
 
 		// @ts-ignore send sticker as image
