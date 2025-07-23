@@ -54,8 +54,8 @@ export default async function (event: Partial<ConnectionState>) {
 
 				const now = Date.now()
 				lastLogins.add(now, now)
-				// bot.connect()
-				start()
+				bot.connect()
+				// start()
 				return
 			}
 			print('WA', 'Logged out', 'red')

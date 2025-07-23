@@ -1,5 +1,10 @@
 import {
 	Browsers,
+	isJidBot,
+	isJidBroadcast,
+	isJidMetaIa,
+	isJidNewsletter,
+	isJidStatusBroadcast,
 	makeCacheableSignalKeyStore,
 	makeWASocket,
 	useMultiFileAuthState,
@@ -29,10 +34,11 @@ export default class Baileys {
 			browser: Browsers.macOS('Desktop'),
 			syncFullHistory: false,
 			shouldSyncHistoryMessage: () => false,
-			// ignore status updates
+			// ignore useless msgs
 			shouldIgnoreJid: (jid: str) =>
-				jid?.includes('broadcast') || jid?.includes('newsletter') ||
-				jid?.includes('13135550002@s.whatsapp.net'),
+				isJidBot(jid) ||
+				isJidBroadcast(jid) || isJidNewsletter(jid) ||
+				isJidMetaIa(jid) || isJidStatusBroadcast(jid),
 		})
 
 		// save login creds

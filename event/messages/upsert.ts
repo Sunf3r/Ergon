@@ -3,7 +3,6 @@ import { CmdCtx, delay, getCtx } from '../../map.js'
 import { getUser } from '../../plugin/prisma.js'
 import { type proto } from 'baileys'
 import { getFixedT } from 'i18next'
-import bot from '../../wa.js'
 
 // messages upsert event
 export default async function (raw: { messages: proto.IWebMessageInfo[] }, event: str) {
@@ -70,7 +69,7 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 
 		Promise.resolve(cmd.run!(ctx))
 			.catch(async (e) => {
-				print(`EVENT/${event}`, e, 'red')
+				print(`CMD/${cmd.name}`, e, 'red')
 				sendMsg(`[⚠️] ${e?.message || e}`)
 				return
 			})
