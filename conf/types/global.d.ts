@@ -36,12 +36,20 @@ type Alarm = {
 
 interface Media {
 	buffer: Buf
+	url: str
 	mime: str
 	length: num
 	duration: num
 	type: str
 	height?: num
 	width?: num
+}
+
+interface MediaMsg {
+	url: str
+	directPath: str
+	mediaKey: str
+	thumbnailDirectPath: str
 }
 
 type AIMsg = { header: str; text: str; tokens: num; thoughts: num }

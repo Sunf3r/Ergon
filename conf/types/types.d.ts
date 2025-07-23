@@ -29,7 +29,7 @@ interface Msg {
 	author: str
 	text: str
 	type: MsgTypes
-	media?: str
+	media?: MediaMsg
 	mime: str
 	isBot: bool
 	quoted?: Msg

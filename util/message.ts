@@ -74,9 +74,16 @@ async function getCtx(raw: proto.IWebMessageInfo): Promise<CmdCtx> {
 // download msg media
 async function downloadMedia(raw: any, types: [MsgTypes, str]) {
 	const msg = (raw?.message || raw)[types[1]] || raw
-	if (!isMedia(types[0]) || !msg.url) return
+	if (!isMedia(types[0]) || (!msg.media && !msg.url)) return
 
-	if (cache.media.has(msg.url)) return msg.url // return cached media
+	let newObj: MediaMsg = {
+		url: msg.url,
+		directPath: msg.directPath,
+		mediaKey: msg.mediaKey,
+		thumbnailDirectPath: msg.thumbnailDirectPath,
+	}
+
+	if (cache.media.has(msg.url)) return newObj // return metadata to download it later
 	const buffer = await downloadMediaMessage(
 		raw.message ? raw : { message: raw },
 		'buffer',
@@ -91,6 +98,7 @@ async function downloadMedia(raw: any, types: [MsgTypes, str]) {
 
 	cache.media.set(msg.url, { // cache media
 		buffer,
+		url: msg.url,
 		mime: msg.mimetype,
 		length: msg.fileLength.low,
 		duration: msg.seconds || 0, // for audio and video
@@ -99,7 +107,7 @@ async function downloadMedia(raw: any, types: [MsgTypes, str]) {
 		width: msg.width || 0,
 	})
 
-	return msg.url
+	return newObj
 }
 
 // getInput: get cmd, args and ignore non-prefixed msgs

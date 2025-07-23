@@ -35,7 +35,6 @@
 		"humanize-duration": "^3.33.0",
 		"i18next": "^25.3.2",
 		"i18next-fs-backend": "^2.6.0",
-		"jimp": "^0.16.13",
 		"luxon": "^3.7.1",
 		"node-webpmux": "^3.2.1",
 		"pino": "^9.7.0",

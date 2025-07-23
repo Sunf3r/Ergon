@@ -14,15 +14,22 @@ async function getMedia(msg: Msg, startTyping?: Func) {
 	if (!target || !target.media) return
 	if (startTyping) await startTyping()
 
-	let media = cache.media.get(target.media)
-	if (!media) media = await downloadMedia(target, [target.type, 'media'])
+	let media = cache.media.get(target.media.url)
+	if (!media) {
+		// media not cached, download it
+		await downloadMedia(target, [target.type, 'media'])
+		media = cache.media.get(target.media.url)
+		if (!media) return // failed to download media
+	}
 
 	return {
 		target,
 		buffer: media.buffer,
+		url: target.media.url,
 		mime: media.mime,
 		length: media.length,
 		duration: media.duration,
+		type: target.type,
 		height: media.height,
 		width: media.width,
 	}

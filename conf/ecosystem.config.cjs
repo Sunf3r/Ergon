@@ -5,7 +5,6 @@
  */
 const node_args = [
 	'--expose-gc',
-	'--no-warnings',
 	'--env-file=conf/.env',
 ]
 
