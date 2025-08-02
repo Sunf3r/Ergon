@@ -46,23 +46,11 @@
 
 > 🪧 » _Recommended version: 3.12 or higher_
 
-**Ergon also support these languages, but you DON'T need to install it if you won't use:**
+- You can also use these languages/runtimes inside Ergon or eval. But it's **not required** for any
+  base features. Install if you want to use them.
 
-- [BUN 🧁](https://bun.sh)
-
-> 🪧 » _Recommended version: 1.1.41 or higher_
-
-- [DENO 🦕](https://deno.com/)
-
-> 🪧 » _Recommended version: 2.1.4 or higher_
-
-- [LUAJIT 🌙](https://luajit.org/)
-
-> 🪧 » _Recommended version: 2.1 or higher_
-
-- G++ 🔥
-
-> 🪧 » _Recommended version: 11.4 or higher_
+* [BUN 🧁](https://bun.sh), [DENO 🦕](https://deno.com/), [LuaJIT 🌙](https://luajit.org/), G++
+  (C/C++), Rustc (Rust)
 
 ### `2 -` 📁 Download or clone the repository:
 

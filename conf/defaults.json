@@ -61,6 +61,13 @@
 				"./conf/temp/main #"
 			],
 			"ext": "cpp"
+		},
+		"rust": {
+			"cmd": [
+				"rustc -o conf/temp/main ",
+				"./conf/temp/main #"
+			],
+			"ext": "rs"
 		}
 	}
 }

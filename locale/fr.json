@@ -1,123 +1,109 @@
 {
 	"events": {
-		"cooldown": "[🕓] - Vous êtes pressé ? Vous avez été taxé en *{{time}}*, attendez une minute"
+		"cooldown": "[🕓] - Êtes-vous pressé? Vous avez été taxé en * {{time}} *, attendez un peu là-bas",
+		"nodb": "[💡] Cette commande nécessite une base de données configurée."
 	},
 	"langs": {
 		"pt": "portugais",
 		"en": "Anglais",
 		"es": "Espagnol",
 		"fr": "Français",
-		"pl": "polonais"
+		"de": "Allemand"
 	},
 	"usage": {
-		"title": "*[❗] - Comment l'utiliser ?*",
-		"args": "*[💡] - Types de paramètres :*\n<obligatoire>\n[facultatif]\n(message mentionné)",
-		"examples": "*[💯] - Exemples :*"
+		"title": "* [❗] - comment utiliser? *",
+		"args": "* [💡] - Types de paramètres: *\n<obligatoire>\n[facultatif]\n(Message mentionné)",
+		"examples": "* [💯] - Exemples: *"
 	},
 	"help": {
-		"usage": "[nom d'une commande]",
-		"desc": "Afficher plus d'informations sur une commande",
+		"usage": "[Nom d'une commande]",
+		"desc": "Voir des informations sur une commande",
 		"examples": ["Gémeaux", "autocollant"],
-		"title": "*[📖] - Menu Aide*",
-		"prefix": "[⚙️] Modifier le préfixe : *{{prefix}}*",
-		"lang": "[🌎] Changer de langue : *{{lang}}*"
+		"title": "* [📖] - Menu d'aide *",
+		"prefix": "[⚙️] Changer le préfixe: * {{prefix}} *",
+		"lang": "[🌎] Changer la langue: * {{lang}} *"
 	},
 	"language": {
-		"usage": "<code langue>",
-		"desc": "Changer la langue du bot",
-		"examples": ["TP", "fr", "est", "fr", "svp"],
-		"changed": "[🌎] – La langue a été modifiée en *{{lng}}*"
+		"usage": "<Code de langue>",
+		"desc": "Changer la langue des bot",
+		"examples": [
+			"{pt}: Portugais",
+			"{en}: anglais",
+			"{fr}: français",
+			"{es}: espagnol",
+			"{de}: allemand"
+		],
+		"changed": "[🌎] - Langue changée en * {{lng}} *"
 	},
 	"prefix": {
-		"usage": "<préfixe avec jusqu'à 3 chiffres>",
-		"desc": "Changer le préfixe de la commande",
+		"usage": "<Préfixe avec jusqu'à 3 chiffres>",
+		"desc": "Changer le préfixe des commandes",
 		"examples": [".", "!"],
-		"changed": "[ ✔️ ] - Votre nouveau préfixe est : *{{prefix}}*"
+		"changed": "[✔️] - Votre nouveau préfixe est: * {{prefix}} *"
 	},
-	"ping": {
-		"desc": "Voir le temps de réponse du bot",
-		"pinging": "Calcul du temps de réponse..."
-	},
+	"ping": { "desc": "Voir le temps de réponse du bot" },
 	"choose": {
-		"usage": "<option 1>, <option 2>, [option 3], [...]",
-		"desc": "Vous avez un doute sur quoi faire ? Choisissez ceci ou cela",
+		"usage": "<Option 1>, <option 2>, [Option 3], [...]",
+		"desc": "En doute sur ce qu'il faut faire? Choisissez ceci ou",
 		"examples": [
 			"Pizza, gâteau, pudding, pomme",
 			"Je devrais faire ça, je ne devrais pas faire ça",
-			"Faire une promenade, jouer à des jeux vidéo"
+			"Allez au gymnase, jouez à GTA 6"
 		],
-		"result": "*[🏆] - Option choisie :* {{chosen}}"
+		"result": "* [🏆] - Option choisie: * {{chosen}}"
 	},
 	"gemini": {
-		"usage": "[pro : Gemini Pro]/[reset : Réinitialiser la fenêtre contextuelle] <invite> [(image/audio/vidéo)]",
-		"desc": "Discutez avec l'IA de Google",
+		"usage": "[Clean: Efface l'historique] [Réinitialiser: efface les souvenirs et l'histoire] <MIVER> [(Media)]",
+		"desc": "Parlez à Google AI",
 		"examples": [
-			"(image) Résumez le texte dans cette image",
-			"Quelle est la population de New York ?",
-			"réinitialiser Qui suis-je ?",
-			"pro Expliquez la physique quantique comme si vous étiez un adolescent"
+			"(Image) Résumez le texte de cette image",
+			"Quelle est la population de New York?",
+			"Réinitialiser qui suis-je?",
+			"Clean tu te souviens de ce que je t'ai demandé hier?"
 		]
 	},
-	"rank": {
-		"usage": "",
-		"desc": "Voir le classement des membres qui ont le plus parlé dans le groupe",
-		"examples": [""]
-	},
+	"rank": { "desc": "Voir le grade de membres qui ont le plus parlé du groupe" },
 	"sticker": {
-		"usage": "<(image/gif)> [rmbg : supprime l'arrière-plan d'une image]",
+		"usage": "<(Image / vidéo)> [Numéro: qualité d'image de 1 à 100 (standard: 1)] [RMBG: supprimez l'arrière-plan d'une image]",
 		"desc": "Créez des autocollants sans fond !!!!",
-		"examples": ["rmbg <image jointe>", "(image mentionnée)"],
-		"nobuffer": "[⚠️] - Médias incompatibles ou introuvables"
+		"examples": ["(Image) rmbg", "(Image) 50", "(vidéo)", "(autocollant)"],
+		"nobuffer": "[⚠️] - Media incompatible ou non trouvé"
 	},
 	"clean": {
-		"usage": "<nombre de messages (max 200)>",
-		"desc": "Cachez vos crimes en supprimant les derniers messages de groupe",
+		"usage": "<Nombre de messages (max 200)>",
+		"desc": "Cachez vos crimes effaçant les derniers messages de groupe (nécessite l'autorisation de l'administrateur)",
 		"examples": ["10", "200"],
-		"noAmount": "\"nettoyer 0\" ? Pensez-vous que c'est votre chambre et que vous ne nettoyez rien ?",
-		"deleted": "Je vais supprimer les {{msgsSize}} derniers messages et ensuite je vais me rendormir ici même dans mon hamac"
-	},
-	"everyone": {
-		"usage": "[contenu du message]",
-		"desc": "Mentionner tous les utilisateurs d'un groupe dans un seul message",
-		"examples": ["", "Des nouvelles urgentes !", "On va au cinéma aujourd'hui ?"]
-	},
-	"remind": {
-		"usage": "<durée> <message>",
-		"desc": "Programmer des rappels",
-		"examples": [
-			"10 min 15 s Arrêter le réacteur nucléaire",
-			"1h 42m Acheter du pain",
-			"15s de sperme"
-		]
-	},
-	"reveal": {
-		"usage": "(média à vue unique) [forever/f : révéler pour toujours]",
-		"desc": "Encore une fois ! Révéler des médias de visualisation uniques",
-		"examples": [
-			"(image à vue unique) pour toujours",
-			"(vidéo à vue unique)",
-			"(audio à vue unique) f"
-		]
-	},
-	"search": {
-		"usage": "<question>",
-		"desc": "Recherchez-le sur Google !",
-		"examples": ["10 dollars en euros", "Quelle heure est-il à Londres ?"]
-	},
-	"translate": {
-		"usage": "<code langue : en/pt/fr...> <texte>",
-		"desc": "Google Traduction",
-		"examples": ["fr Chatte", "es La guerre c'est l'amour"]
+		"noAmount": "\"Clean 0\"? Pensez-vous que voici votre chambre que vous ne nettoyez rien?",
+		"deleted": "J'effacerai les derniers messages {{msgsSize}} et je vais ensuite me rendormir ici sur mon réseau"
 	},
 	"download": {
-		"usage": "<audio/vidéo> <url>",
-		"desc": "Téléchargez des vidéos et des audios",
+		"usage": "[A: Audio] <URL>",
+		"desc": "Télécharger des vidéos ou des audios",
+		"examples": ["(Message avec lien)", "{link}", "A {link}"]
+	},
+	"everyone": {
+		"usage": "[message]",
+		"desc": "Mentionner tous les utilisateurs d'un groupe dans un seul message",
+		"examples": ["", "Le jeu", "Nouvelles urgentes!"]
+	},
+	"remove": {
+		"usage": "<image>",
+		"desc": "Supprimer l'arrière-plan d'une image",
+		"examples": ["<image>", "(image)"]
+	},
+	"reveal": {
+		"usage": "(Support de visualisation unique)",
+		"desc": "Révéler un support de visualisation unique",
 		"examples": [
-			"audio https://music.youtube.com/watch?v=4QLvEIXlF6Q",
-			"à https://youtu.be/4QLvEIXlF6Q",
-			"vidéo https://youtu.be/4QLvEIXlF6Q"
-		],
-		"true": "*[⌛] - Téléchargement de la vidéo... Veuillez patienter un instant.*",
-		"false": "*[⌛] - Téléchargement de l'audio... Veuillez patienter un instant.*"
+			"(Image de visualisation unique)",
+			"(Vidéo de visualisation unique)",
+			"(Audio de visualisation unique)",
+			"(autocollant)"
+		]
+	},
+	"translate": {
+		"usage": "<Code de langue: en / pt / fr ...> <Text>",
+		"desc": "Traducteur Google",
+		"examples": ["En bottes chat", "Pt le chat dans le chapeau", "ES JE SUIS UN CHAT"]
 	}
 }

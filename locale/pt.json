@@ -8,7 +8,7 @@
 		"en": "Inglês",
 		"es": "Espanhol",
 		"fr": "Frances",
-		"pl": "Polonês"
+		"de": "Alemão"
 	},
 	"usage": {
 		"title": "*[❗] - Como usar?*",
@@ -17,7 +17,7 @@
 	},
 	"help": {
 		"usage": "[nome de um comando]",
-		"desc": "Consulte mais informações sobre um comando",
+		"desc": "Consulte informações sobre um comando",
 		"examples": [
 			"gemini",
 			"sticker"
@@ -30,11 +30,11 @@
 		"usage": "<código do idioma>",
 		"desc": "Altere o idioma do bot",
 		"examples": [
-			"pt",
-			"en",
-			"es",
-			"fr",
-			"pl"
+			"{pt}: Português",
+			"{en}: Inglês",
+			"{fr}: Francês",
+			"{es}: Espanhol",
+			"{de}: Alemão"
 		],
 		"changed": "[🌎] - Idioma alterado para *{{lng}}*"
 	},
@@ -56,46 +56,37 @@
 		"examples": [
 			"Pizza, bolo, pudim, maçã",
 			"Eu deveria fazer isso, eu não deveria fazer isso",
-			"Sair para passear, jogar vídeogame"
+			"Ir à academia, jogar GTA 6"
 		],
 		"result": "*[🏆] - Opção escolhida:* {{chosen}}"
 	},
 	"gemini": {
-		"usage": "[pro: Gemini Pro]/[reset: Reseta a janela de contexto] <prompt> [(imagem/áudio/vídeo)]",
+		"usage": "[clean: apaga o histórico] [reset: apaga as memórias e o histórico] <prompt> [(mídia)]",
 		"desc": "Converse com a IA do Google",
 		"examples": [
 			"(imagem) Resuma o texto dessa imagem",
 			"Qual é a população de Nova Iorque?",
 			"reset Quem sou eu?",
-			"pro Explique física quântica como se você fosse um adolescente"
-		]
-	},
-	"grok": {
-		"usage": "<prompt>",
-		"desc": "Converse com a IA do Elon Musk",
-		"examples": [
-			"O que você acha do Elon Musk?",
-			"Imite o Donald Trump",
-			"Quais são as melhores ervas para fins medicinais?"
+			"clean Você se lembra do que eu te perguntei ontem?"
 		]
 	},
 	"rank": {
-		"desc": "Veja o rank de membros que mais conversaram no grupo",
-		"msgs": "*{{position}}.* {{author}}: {{count}} mensagens\n",
-		"examples": [""]
+		"desc": "Veja o rank de membros que mais conversaram no grupo"
 	},
 	"sticker": {
-		"usage": "<(imagem/gif)> [rmbg: remove o fundo de uma imagem]",
+		"usage": "<(imagem/vídeo)> [número: qualidade da imagem de 1 a 100 (padrão: 1)] [rmbg: remove o fundo de uma imagem]",
 		"desc": "Crie stickers sem fundo!!!!",
 		"examples": [
-			"rmbg <imagem>",
-			"(imagem)"
+			"(imagem) rmbg",
+			"(imagem) 50",
+			"(video)",
+			"(figurinha)"
 		],
 		"nobuffer": "[⚠️] - Mídia incompatível ou não encontrada"
 	},
 	"clean": {
 		"usage": "<número de mensagens (max 200)>",
-		"desc": "Esconda seus crimes apagando as últimas mensagens do grupo",
+		"desc": "Esconda seus crimes apagando as últimas mensagens do grupo (Requer permissão de administrador)",
 		"examples": [
 			"10",
 			"200"
@@ -105,7 +96,7 @@
 	},
 	"download": {
 		"usage": "[a: áudio] <url>",
-		"desc": "Faça download de vídeos e áudios",
+		"desc": "Faça download de vídeos ou áudios",
 		"examples": [
 			"(mensagem com link)",
 			"{link}",
@@ -117,20 +108,8 @@
 		"desc": "Mencione todos os usuários de um grupo em uma única mensagem",
 		"examples": [
 			"",
-			"Notícia urgente!",
-			"Vamos ao cinema hoje?"
-		]
-	},
-	"remind": {
-		"usage": "<duração> <mensagem>",
-		"desc": "Agende lembretes",
-		"limit": "[💡] A duração deve ser maior que 1m e menor que 365d.",
-		"pending": "[⏰] *Lembretes pendentes:*\n {{pending}}\n\n",
-		"done": "[✅] *Lembretes concluídos:*\n {{done}}",
-		"examples": [
-			"45d Voltar com a ex",
-			"10m 15s Desligar o reator nuclear",
-			"1m Gozar"
+			"O JOGO",
+			"Notícia urgente!"
 		]
 	},
 	"remove": {
@@ -143,27 +122,21 @@
 	},
 	"reveal": {
 		"usage": "(mídia de visualização única)",
-		"desc": "Só mais uma vez! Revele uma mídia de visualização única",
+		"desc": "Revele uma mídia de visualização única",
 		"examples": [
 			"(imagem de visualização única)",
 			"(vídeo de visualização única)",
-			"(audio de visualização única)"
-		]
-	},
-	"search": {
-		"usage": "<pergunta>",
-		"desc": "Dá um Google!",
-		"examples": [
-			"10 dólares em euros",
-			"Que horas são em Londres?"
+			"(audio de visualização única)",
+			"(figurinha)"
 		]
 	},
 	"translate": {
 		"usage": "<código do idioma: en/pt/fr...> <texto>",
 		"desc": "Google Tradutor",
 		"examples": [
-			"fr Pussy",
-			"es War is love"
+			"en Gato de botas",
+			"pt The cat in the hat",
+			"es Je suis un chat"
 		]
 	}
 }

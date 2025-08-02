@@ -1,0 +1,111 @@
+{
+	"events": {
+		"cooldown": "[🕓] - Hast du es eilig? Sie wurden in *{{time}} *besteuert, warten Sie dort ein bisschen",
+		"nodb": "[💡] Dieser Befehl erfordert eine konfigurierte Datenbank."
+	},
+	"langs": {
+		"pt": "Portugiesisch",
+		"en": "Englisch",
+		"es": "Spanisch",
+		"fr": "Französisch",
+		"de": "Deutsch"
+	},
+	"usage": {
+		"title": "*[❗] - wie man benutzt?*",
+		"args": "*[💡] - Arten von Parametern:*\n<obligatorisch>\n[optional]\n(Nachricht erwähnt)",
+		"examples": "*[💯] - Beispiele:*"
+	},
+	"help": {
+		"usage": "[Name eines Befehls]",
+		"desc": "Siehe Informationen zu einem Befehl",
+		"examples": ["Zwillinge", "Aufkleber"],
+		"title": "*[📖] - Hilfemenü**",
+		"prefix": "[⚙️] Präfix ändern: *{{prefix}} *",
+		"lang": "[🌎] Sprache ändern: *{{lang}} *"
+	},
+	"language": {
+		"usage": "<sprachcode>",
+		"desc": "Bot Sprache ändern",
+		"examples": [
+			"{pt}: Portugiesisch",
+			"{en}: Englisch",
+			"{fr}: Französisch",
+			"{es}: Spanisch",
+			"{de}: Deutsch"
+		],
+		"changed": "[🌎] - Sprache geändert in *{{lng}} *"
+	},
+	"prefix": {
+		"usage": "<Präfix mit bis zu 3 Ziffern>",
+		"desc": "Ändern Sie das Präfix der Befehle",
+		"examples": [".", "!"],
+		"changed": "[✔️] - Ihr neues Präfix ist: *{{prefix}} *"
+	},
+	"ping": { "desc": "Siehe Bot -Reaktionszeit" },
+	"choose": {
+		"usage": "<option 1>, <option 2>, [Option 3], [...]",
+		"desc": "Im Zweifelsfall darüber, was zu tun ist? Wählen Sie dies oder das",
+		"examples": [
+			"Pizza, Kuchen, Pudding, Apfel",
+			"Ich sollte das tun, das sollte ich nicht tun",
+			"Gehen Sie ins Fitnessstudio, spielen Sie GTA 6"
+		],
+		"result": "* [🏆] - Option ausgewählt:* {{chosen}}"
+	},
+	"gemini": {
+		"usage": "[Clean: Löscht das historische] [Reset: Löscht Erinnerungen und Geschichte] <prompt> [(Medien)]",
+		"desc": "Sprechen Sie mit Google AI",
+		"examples": [
+			"(Bild) Fassen Sie den Text dieses Bildes zusammen",
+			"Was ist die Bevölkerung von New York?",
+			"Zurücksetzen Wer bin ich?",
+			"Sauber, erinnerst du dich, was ich dich gestern gefragt habe?"
+		]
+	},
+	"rank": {
+		"desc": "Sehen Sie den Rang der Mitglieder, die in der Gruppe am meisten gesprochen haben"
+	},
+	"sticker": {
+		"usage": "<(Bild/Video)> [Nummer: Bildqualität von 1 bis 100 (Standard: 1)] [RMBG: Entfernen Sie den Hintergrund aus einem Bild]",
+		"desc": "Erstellen Sie Aufkleber ohne Hintergrund !!!!",
+		"examples": ["(Bild) RMBG", "(Bild) 50", "(Video)", "(Aufkleber)"],
+		"nobuffer": "[⚠️] - Medien inkompatibel oder nicht gefunden"
+	},
+	"clean": {
+		"usage": "<Anzahl der Nachrichten (max. 200)>",
+		"desc": "Verstecken Sie Ihre Verbrechen, in denen die neuesten Gruppennachrichten ausgelöscht werden (erfordert die Erlaubnis der Administrator).",
+		"examples": ["10", "200"],
+		"noAmount": "\"Clean 0\"? Glaubst du, hier ist dein Zimmer, in dem du nichts reinigt?",
+		"deleted": "Ich werde die letzten {{msgsSize}} -Botschaften löschen und dann hier in meinem Netzwerk wieder einschlafen"
+	},
+	"download": {
+		"usage": "[A: Audio] <URL>",
+		"desc": "Laden Sie Videos oder Audios herunter",
+		"examples": ["(Nachricht mit Link)", "{link}", "A {link}"]
+	},
+	"everyone": {
+		"usage": "[Nachricht]",
+		"desc": "Erwähnen Sie alle Benutzer einer Gruppe in einer einzigen Nachricht",
+		"examples": ["", "Das Spiel", "Dringende Neuigkeiten!"]
+	},
+	"remove": {
+		"usage": "<Abbild>",
+		"desc": "Entfernen Sie den Hintergrund aus einem Bild",
+		"examples": ["<Abbild>", "(Bild)"]
+	},
+	"reveal": {
+		"usage": "(Einzigartige Visualisierungsmedien)",
+		"desc": "Entdecken Sie ein einzigartiges Visualisierungsmedien",
+		"examples": [
+			"(Einzigartiges Anzeigenbild)",
+			"(Einzigartiges Anzeigen Video)",
+			"(Einzigartige Anzeige -Audio)",
+			"(Aufkleber)"
+		]
+	},
+	"translate": {
+		"usage": "<Sprachcode: EN/PT/FR ...> <text>",
+		"desc": "Google Übersetzer",
+		"examples": ["En stoot kat", "pt die Katze im Hut", "Es JE Suis un Chat"]
+	}
+}
