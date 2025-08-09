@@ -54,7 +54,7 @@ async function send(this: str, text: str | AnyMessageContent, user?: User) {
 			if (text.startsWith('usage.')) { // it's a cmd usage
 				text = text.replace('usage.', '')
 
-				cache.cmds.get('help').run(
+				cache.cmds.get('help')!.run(
 					{ args: [text], send: send.bind(this), user, t } as CmdCtx,
 				)
 				// run help cmd to get cmd usage

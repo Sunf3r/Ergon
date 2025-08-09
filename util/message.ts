@@ -31,7 +31,7 @@ async function getCtx(raw: proto.IWebMessageInfo): Promise<CmdCtx> {
 	let phone = key.fromMe ? bot.sock.user?.id! : key.remoteJid!
 	if (key.participant) phone = key.participant!
 
-	if (phone.endsWith('@g.us')) return fakeCtx
+	if (phone?.endsWith('@g.us')) return fakeCtx
 	let user = await getUser({ phone })
 
 	const mime = findKey(message, 'mimetype') // media mimetype like image/png
@@ -76,14 +76,14 @@ async function downloadMedia(raw: any, types: [MsgTypes, str]) {
 	const msg = (raw?.message || raw)[types[1]] || raw
 	if (!isMedia(types[0]) || (!msg.media && !msg.url)) return
 
-	let newObj: MediaMsg = {
+	let keyObj: MediaMsg = {
 		url: msg.url,
 		directPath: msg.directPath,
 		mediaKey: msg.mediaKey,
 		thumbnailDirectPath: msg.thumbnailDirectPath,
 	}
 
-	if (cache.media.has(msg.url)) return newObj // return metadata to download it later
+	if (cache.media.has(msg.url)) return keyObj // return metadata to download it later
 	const buffer = await downloadMediaMessage(
 		raw.message ? raw : { message: raw },
 		'buffer',
@@ -107,7 +107,7 @@ async function downloadMedia(raw: any, types: [MsgTypes, str]) {
 		width: msg.width || 0,
 	})
 
-	return newObj
+	return keyObj
 }
 
 // getInput: get cmd, args and ignore non-prefixed msgs

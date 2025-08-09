@@ -5,6 +5,7 @@ export default abstract class Cmd {
 	name: str
 	alias: str[]
 	subCmds: str[]
+	/** Cooldown in miliseconds */
 	cooldown: num
 	access: Partial<{
 		dm: bool // cmd can run on DM
@@ -17,7 +18,8 @@ export default abstract class Cmd {
 	constructor(c: Partial<Cmd>) {
 		this.name = c.name || ''
 		this.alias = c.alias || []
-		this.cooldown = c.cooldown === 0 ? 0 : c.cooldown || 3 // Ignore some cmds cooldown
+		// default cooldown is 3 seconds; allow explicit 0 to disable
+		this.cooldown = c.cooldown === 0 ? 0 : c.cooldown || 3_000
 		this.subCmds = c.subCmds || []
 		this.access = Object.assign({
 			dm: true,

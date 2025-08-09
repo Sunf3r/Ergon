@@ -56,7 +56,7 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 			user.delay += cmd.cooldown
 			const timeout = user.delay - now
 
-			if (user.delay - Date.now() < 10_000) {
+			if (timeout < 10_000) {
 				await sendMsg(t('events.cooldown', { time: timeout.duration(true) }))
 				// warns user about cooldown
 			}

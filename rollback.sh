@@ -1,3 +1,4 @@
+rm -rf rollback
 cd ..
 cp -r wa rollback_wa
 cd rollback_wa

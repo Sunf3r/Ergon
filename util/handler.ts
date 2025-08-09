@@ -45,12 +45,13 @@ async function loadCmds() {
 async function loadEvents() {
 	await folderHandler(`./build/event`, (file: str, category: str, imported: any) => {
 		const event = imported
-		const name = `${category}.${file.slice(0, -3)}`
+		const name = `${category}.${file.slice(0, -3)}` as keyof BaileysEventMap
 		// folder+file names are the same of lib events
 		cache.events.set(name, event)
 
+		bot.sock.ev.removeAllListeners(name)
 		// Listen to the event here
-		bot.sock.ev.on(name as keyof BaileysEventMap, (...args) => {
+		bot.sock.ev.on(name, (...args) => {
 			// It allows to modify events in run time
 			cache.events.get(name)!(...args, name)
 				.catch((e: Error) => print(`EVENT/${name}:`, e, 'red'))
