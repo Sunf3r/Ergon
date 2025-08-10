@@ -17,7 +17,10 @@ export default async function runCode(lang: Lang, code = '', file: str = '', tem
 			file = `${defaults.runner.tempFolder}exec.${data.ext}` // file path
 
 			if (template in data.templates && template != '') { //check if have some valid template selected
-				code = (data.templates as Record<string, string>)[template].replace("//__CODE__//", code)
+				code = (data.templates as Record<string, string>)[template].replace(
+					'//__CODE__//',
+					code,
+				)
 				//and replace the placeholder to the code
 			}
 
@@ -33,7 +36,6 @@ export default async function runCode(lang: Lang, code = '', file: str = '', tem
 		}
 		return output
 	} catch (e: any) {
-
 		// remove some chars that can conflict with regex chars
 		const regex = `(${cli.join('|').filterForRegex()})`
 		return String(e?.message || e)
@@ -43,5 +45,5 @@ export default async function runCode(lang: Lang, code = '', file: str = '', tem
 }
 //    ___
 //   (o o)        linksyyy pass here
-//   ( V )
+//   ( V )        'reri' also pass here
 ///--m - m---------\

@@ -65,7 +65,7 @@ type GeminiArgs = {
 	input: str
 	user: User
 	chat?: str
-	callBack?: Func
+	callBack: Func
 	args: any[]
 	file?: GoogleFile
 }

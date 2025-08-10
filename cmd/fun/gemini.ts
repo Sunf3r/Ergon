@@ -1,5 +1,6 @@
 import { getMedia, sendOrEdit } from '../../util/messages.js'
 import { cleanMemories } from '../../plugin/memories.js'
+import { randomDelay } from '../../util/functions.js'
 import { Cmd, CmdCtx, defaults } from '../../map.js'
 import gemini from '../../util/geminiApi.js'
 
@@ -44,6 +45,7 @@ export default class extends Cmd {
 			},
 		}
 		await sendPrompt(model)
+		await randomDelay(2_000, 3_000)
 		react('sparkles')
 
 		async function sendPrompt(model: num) {

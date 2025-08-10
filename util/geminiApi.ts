@@ -1,9 +1,9 @@
 import { createPartFromUri, FileState, GenerateContentResponse, GoogleGenAI } from '@google/genai'
 import { createAlarms, getUserAlarms } from '../plugin/alarms.js'
 import { GeminiArgs, GoogleFile } from '../conf/types/types.js'
+import { randomDelay, randomTime } from './functions.js'
 import { createMemories } from '../plugin/memories.js'
 import { defaults, delay, User } from '../map.js'
-import { randomDelay } from './functions.js'
 
 const GoogleAI = new GoogleGenAI({ apiKey: process.env.GEMINI })
 
@@ -12,17 +12,12 @@ export default async function gemini(
 ) {
 	let upload
 	let interval
-	const isStream = !input.startsWith(' ')
-	const title = model === 3 ? 'Gemini Pro' : model === 2 ? 'Gemini' : 'gemini'
 	const msg = {
 		header: '',
-		searches: '',
 		text: '',
 	}
-	if (isStream) {
-		interval = createInterval(callBack!, args, msg)
-		input = input.slice(2)
-	}
+	interval = createInterval(callBack!, args, msg)
+
 	if (file) upload = await uploadFile(file as GoogleFile, msg)
 	const message = upload ? [createPartFromUri(upload.uri!, upload.mimeType!), input] : input
 
@@ -32,44 +27,28 @@ export default async function gemini(
 		history: user.gemini,
 	})
 
-	let stream
-	if (isStream) stream = await gemini.sendMessageStream({ message })
-	else stream = await gemini.sendMessage({ message })
-
+	const stream = await gemini.sendMessageStream({ message })
 	msg.header = ''
-	// @ts-ignore i don't have another way to check this
-	if (!stream.text) {
-		stream = stream as AsyncGenerator<GenerateContentResponse>
-		for await (const chunk of stream) handleResponse(chunk, msg, title)
-	} else {
-		stream = stream as GenerateContentResponse
-		handleResponse(stream, msg, title)
-	}
+
+	for await (const chunk of stream) handleResponse(chunk, msg)
 
 	await createMemories(user, msg)
 	await createAlarms(user, msg, chat!)
 
 	user.gemini = gemini.getHistory()
 
-	if (callBack) {
-		clearInterval(interval!)
-		await randomDelay(1_500, 2_500)
-		await callBack(...args, msg.header + msg.searches + msg.text)
-	}
+	clearInterval(interval!)
+	await randomDelay(1_500, 2_500)
+	await callBack(...args, msg.header + msg.text.trim())
 	// if (upload) GoogleAI.files.delete({ name: upload.name! })
 	return
 }
 
-function handleResponse(chunk: GenerateContentResponse, msg: AIMsg, title: str) {
-	const tokens = chunk?.usageMetadata?.totalTokenCount || -1
-	const thoughts = chunk?.usageMetadata?.thoughtsTokenCount || 0
-
-	msg.header = `- *${title} (Tokens: ${tokens}${thoughts ? ` | Raciocínio: ${thoughts}` : ''})*\n`
-
+function handleResponse(chunk: GenerateContentResponse, msg: AIMsg) {
 	if (chunk?.candidates) {
 		const searches = chunk.candidates[0]?.groundingMetadata?.webSearchQueries
 		if (searches) {
-			msg.searches += `- 🔍 *Pesquisas:* ` + searches.map((s) => s.encode()).join(', ') + '\n'
+			msg.header += `- 🔍 *Pesquisas:* ` + searches.map((s) => s.encode()).join(', ') + '\n'
 		}
 	}
 	if (chunk.text) msg.text += chunk.text
@@ -124,7 +103,7 @@ async function uploadFile(file: GoogleFile, msg: AIMsg) {
 		msg.header += `- *Processing file: ${upload.state}*\n`
 
 		// Sleep until it gets done
-		await delay(3_000)
+		await delay(2_000)
 		// Fetch the file from the API again
 		upload = await GoogleAI.files.get({ name: upload.name! })
 	}
@@ -138,7 +117,7 @@ async function uploadFile(file: GoogleFile, msg: AIMsg) {
 
 function createInterval(callBack: Func, args: any[], msg: AIMsg) {
 	return setInterval(
-		async () => await callBack(...args, msg.header + msg.searches + msg.text),
-		2_000,
+		async () => await callBack(...args, msg.header + msg.text.trim()),
+		randomTime(),
 	)
 }

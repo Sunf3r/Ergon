@@ -22,7 +22,7 @@ export default class extends Cmd {
 		// Language to be runned
 		const firstArg = args[0].split('-')
 		const lang = langs.includes(firstArg[0]) ? args.shift()?.split('-')[0] as Lang : 'eval'
-		const template = (firstArg[1] ?? '')
+		const template = firstArg[1] ?? ''
 
 		const startTime = Date.now() // start time for execution duration
 		let output = '' // output of the code execution

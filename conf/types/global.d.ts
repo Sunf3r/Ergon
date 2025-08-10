@@ -52,7 +52,7 @@ interface MediaMsg {
 	thumbnailDirectPath: str
 }
 
-type AIMsg = { header: str; text: str; searches: str }
+type AIMsg = { header: str; text: str }
 
 type StreamMsg = { msg: Msg; chat: str }
 type Lang = 'py' | 'lua' | 'node' | 'deno' | 'bun' | 'fish' | 'cpp'
