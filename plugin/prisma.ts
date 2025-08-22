@@ -35,8 +35,10 @@ async function getUser(
 		const number = phone!.parsePhone()
 		const data = cache.users.find((u) => u.phone === number)
 		if (data) return data
-		// not on cache, so lets search on db
+		// not on cache, so lets search it on db
 		const dbUser = await prisma.users.findUnique({ where: { phone: number } })
+			.catch(() => {}) // there is no DB. Let's just ignore it
+
 		if (!dbUser) {
 			// not on db, so it's a new user
 			return await createUser({ phone: number, name })

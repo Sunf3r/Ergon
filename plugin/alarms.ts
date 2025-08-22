@@ -10,6 +10,7 @@ let nextAlarmTime = 0
 const alarmRegex = /{ALARM:.+:[0-9].+}/gi
 
 async function sendAlarms() {
+	if (!process.env.DATABASE_URL) return
 	const alarms: Alarm[] = await prisma.alarms.findMany({
 		where: { // only get alarms that are not sent
 			status: 0,
@@ -99,9 +100,10 @@ async function createAlarms(user: User, msg: AIMsg, chat: str) {
 
 // getUserAlarms: get all alarms created by the user
 async function getUserAlarms(user: User) {
+	if (!process.env.DATABASE_URL) return ['Nenhum alarme.']
 	const alarms: Alarm[] = await prisma.alarms.findMany({ where: { author: user.id } })
 
-	if (!alarms[0]) return ['Nenhum alarme encontrado.']
+	if (!alarms[0]) return ['Nenhum alarme.']
 
 	return alarms.map((r) =>
 		`MESSAGE: "${r.msg}". TIME: "${new Date(r.time).toLocaleString(user.lang)}"`
