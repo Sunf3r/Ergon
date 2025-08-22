@@ -7,6 +7,12 @@ import baileys, {
 import type { PrismaPromise } from '@prisma/client'
 import prisma from './prisma.js'
 
+/** PostgreSQL auth strategy
+ * it is used if you setted 'DATABASE_URL' env var
+ * if you don't have a DB, file system auth storing
+ * will be used instead
+ */
+
 const { initAuthCreds, proto } = baileys
 
 const toStorableJson = (value: unknown) => JSON.parse(JSON.stringify(value, BufferJSON.replacer))

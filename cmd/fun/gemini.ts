@@ -17,19 +17,19 @@ export default class extends Cmd {
 		if (!args[0]) return send('Por favor escreva um prompt')
 		let model = 2 // default gemini model
 
-		if (args[0] === this.subCmds[0]) { // clean
-			user.gemini = []
+		if (args[0] === this.subCmds[0]) { // clean subcmd
+			user.gemini = [] // clean user gemini context
 
 			if (!args[1]) return react('ok')
-			args.shift()
+			args.shift() // users can also clean ctx and send the next prompt
 		}
 
 		if (args[0] === this.subCmds[1]) { // reset
-			user.gemini = []
+			user.gemini = [] // clean user gemini context
 			await cleanMemories(user)
 
 			if (!args[1]) return react('ok')
-			args.shift()
+			args.shift() // users can also reset and send the next prompt
 		}
 
 		if (args[0] === this.subCmds[2]) { // use pro model
@@ -44,8 +44,9 @@ export default class extends Cmd {
 				chat: msg.chat,
 			},
 		}
+
 		await sendPrompt(model)
-		await randomDelay(2_000, 3_000)
+		await randomDelay(2_000, 3_000) // wait before reacting for anti-bot detection reasons
 		react('sparkles')
 
 		async function sendPrompt(model: num) {

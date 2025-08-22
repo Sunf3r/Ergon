@@ -13,7 +13,7 @@ async function createUser({ phone, name }: { phone: str; name?: str }): Promise<
 	let id = Number(phone)
 	if (process.env.DATABASE_URL) {
 		const data = await prisma.users.create({
-			data: {
+			data: { // create user on DB if there is one
 				phone,
 				name,
 			},
@@ -42,10 +42,10 @@ async function getUser(
 		if (!dbUser) {
 			// not on db, so it's a new user
 			return await createUser({ phone: number, name })
-			// createUser() will add it to cache
+			// createUser() will also add it to cache
 		}
 
-		// found on db, so lets create a User instance
+		// found on db, so let's create a User instance
 		const user = new User(dbUser)
 		cache.users.add(user.id, user)
 		return user

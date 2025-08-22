@@ -27,27 +27,30 @@
 
 ### `1 -` 🛠️ Install runtimes and tools:
 
-- [NodeJS 💩](https://nodejs.org/pt-br/) (For Ergon)
+- [NodeJS 💩](https://nodejs.org/pt-br/) (for Ergon)
 
-> 🪧 » _Recommended version: 22 or higher_
+> 🪧 » _Recommended version: 24 or higher_
 
 **OPTIONAL TOOLS**
 
-- [PostgreSQL 🐘](https://www.postgresql.org/download/) (For database)
+- [PostgreSQL 🐘](https://www.postgresql.org/download/) (for Database)
 
-> 🪧 » _Recommended version: 16 or higher_ Some cmds may require a database to work (e.g.
-> rank/alarm) or to set language/prefix permanently. but Ergon works ok with no db.
+> 🪧 » _Recommended version: 16 or higher_
 
-- FFMPEG (For video stickers)
+> ⚠️ » You may notice some auth creds/keys storing issues if you don't set a DB, but Ergon will
+> still work well. Also, some cmds may require a database to work (e.g. rank/alarm) or setting
+> user-level language/prefix permanently.
+
+- FFMPEG (for video stickers)
 
 > 🪧 » Run `sudo apt install ffmpeg` to install it on Debian/Ubuntu
 
-- [Python 🐍](https://www.python.org/) (For removing backgrounds)
+- [Python 🐍](https://www.python.org/) (for removing backgrounds)
 
 > 🪧 » _Recommended version: 3.12 or higher_
 
 - You can also use these languages/runtimes inside Ergon or eval. But it's **not required** for any
-  base features. Install if you want to use them.
+  base features. only install them if you want to use them.
 
 * [BUN 🧁](https://bun.sh), [DENO 🦕](https://deno.com/), [LuaJIT 🌙](https://luajit.org/), G++
   (C/C++), Rustc (Rust)
@@ -75,7 +78,7 @@ DEVS="number01|number02|number03"
 GEMINI="get a key on https://aistudio.google.com/app/apikey"
 ```
 
-You can set default configuration:
+You can also set default configuration:
 
 - `defaults.json` (`conf/defaults.json`)
 
@@ -102,6 +105,7 @@ cd Ergon
 
 # This script will do everything to prepare the bot for
 # **the first time**, *but you need to do steps 1~3 first*
+# You DO NOT need to run setup EVERY TIME you want to start the bot.
 npm run setup
 # It will: install tsc/pm2/prisma as global modules,
 # install node modules,
@@ -130,6 +134,9 @@ npm start
 
 # `-1.` 🗒️ Important Notes:
 
+- Random Delays are implemented on several places to prevent Ergon from being flagged as a Bot by
+  Meta anti-bot detectors. I don't recommend removing it.
+
 - Updating:
 
 ```
@@ -143,7 +150,7 @@ npm run update
 # update python dependencies, generate prisma schema,
 # and rebuild source.
 
-# update won't start services.
+# 'update' won't start services.
 
 # Starting services
 npm start

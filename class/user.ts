@@ -31,68 +31,60 @@ export default class User {
 		this.gemini = []
 	}
 
-	// get chat: get user phone number on cache to send msgs
-	public get chat() {
+	public get chat() { // get user id to send msgs
 		return this.phone + '@s.whatsapp.net'
 	}
 
-	// get name: get user name on cache
-	public get name() {
+	public get name() { // get user name from cache
 		return this._name
 	}
 
-	// set name: update user name on cache and db
-	public set name(value: str) {
-		this._name = value
+	public set name(value: str) { // update user name
+		this._name = value // on cache
 		;(async () =>
-			process.env.DATABASE_URL &&
-			await prisma.users.update({
+			process.env.DATABASE_URL && // if there is a DB
+			await prisma.users.update({ // update it on DB too
 				where: { id: this.id },
 				data: { name: value },
 			}))()
 		return
 	}
 
-	// get lang: get user language on cache
-	public get lang() {
+	public get lang() { // get user language from cache
 		return this._lang
 	}
 
-	// set lang: update user language on cache and db
-	public set lang(value: str) {
-		this._lang = value
+	public set lang(value: str) { // update user language
+		this._lang = value // on cache
 		;(async () =>
-			process.env.DATABASE_URL &&
-			await prisma.users.update({
+			process.env.DATABASE_URL && // if there is a DB
+			await prisma.users.update({ // update it on DB too
 				where: { id: this.id },
 				data: { lang: value },
 			}))()
 		return
 	}
 
-	// get prefix: get prefix prefix on cache
-	get prefix() {
+	get prefix() { // get user prefix from cache
 		return this._prefix
 	}
 
-	// set prefix: update user prefix on cache and db
-	set prefix(value: str) {
-		this._prefix = value
+	set prefix(value: str) { // update user db
+		this._prefix = value // on cache
 		;(async () =>
-			process.env.DATABASE_URL &&
-			await prisma.users.update({
+			process.env.DATABASE_URL && // if there is a DB
+			await prisma.users.update({ // update it on DB too
 				where: { id: this.id },
 				data: { prefix: value },
 			}))()
 		return
 	}
 
-	// addCmd: +1 on user cmds count on cache and db
-	async addCmd() {
-		this.cmds++
+	async addCmd() { // +1 on user cmds count
+		this.cmds++ // on cache
 
 		if (!process.env.DATABASE_URL) return
-		await prisma.users.update({
+		await prisma.users.update({ // update it on db
 			where: { id: this.id },
 			data: {
 				cmds: { increment: 1 },

@@ -65,14 +65,15 @@ export default async function (raw: { messages: proto.IWebMessageInfo[] }, event
 			// wait until it gets finished
 		} else user.delay = now + cmd.cooldown
 
-		user.addCmd() // 1+ on user personal cmds count
+		user.addCmd() // 1+ on user personal cmds counter
 
-		Promise.resolve(cmd.run!(ctx))
-			.catch(async (e) => {
-				print(`CMD/${cmd.name}`, e, 'red')
-				sendMsg(`[⚠️] ${e?.message || e}`)
-				return
-			})
+		try {
+			cmd.run!(ctx)
+		} catch (e: any) {
+			print(`CMD/${cmd.name}`, e, 'red')
+			sendMsg(`[⚠️] ${e?.message || e}`)
+			return
+		}
 	}
 	return
 }

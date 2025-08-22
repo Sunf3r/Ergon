@@ -3,8 +3,8 @@ import prisma, { getGroup, getUser } from './prisma.js'
 import { readFile, writeFile } from 'node:fs/promises'
 import { randomDelay } from '../util/functions.js'
 import { execSync } from 'node:child_process'
-import { inspect } from 'node:util'
 import { CmdCtx, delay } from '../map.js'
+import { inspect } from 'node:util'
 import cache from './cache.js'
 import bot from '../wa.js'
 
@@ -77,7 +77,7 @@ export default async function runCode(lang: Lang, code = '', file = '', ctx?: Cm
 
 function testTriggers(triggers: trigger[], code: str) {
 	for (let t of triggers) {
-		if (Object.hasOwn(t, 'includes')) {
+		if (Object.hasOwn(t, 'includes')) { // it's a 'includes' trigger
 			t = t as triggerIncludes
 			for (const i of t.includes) {
 				if (code.includes(i)) {
@@ -85,7 +85,7 @@ function testTriggers(triggers: trigger[], code: str) {
 					break
 				}
 			}
-		} else if (Object.hasOwn(t, 'notIncludes')) {
+		} else if (Object.hasOwn(t, 'notIncludes')) { // it's a 'not includes' trigger
 			t = t as triggerNotIncludes
 			for (const i of t.notIncludes) {
 				if (!code.includes(i)) {

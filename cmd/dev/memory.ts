@@ -7,14 +7,14 @@ export default class extends Cmd {
 		})
 	}
 	async run({ send }: CmdCtx) {
-		const memory = process.memoryUsage()
+		const mem = process.memoryUsage()
 
 		const memoryUsageMessage = `Memory Usage:
-- RSS (Resident Set Size): ${memory.rss.bytes()}
-- Heap Total: ${memory.heapTotal.bytes()}
-- Heap Used: ${memory.heapUsed.bytes()}
-- External: ${memory.external.bytes()}
-- Array Buffers: ${memory.arrayBuffers.bytes()}`
+- RSS (Resident Set Size): ${mem.rss.bytes()}
+- Heap Total: ${mem.heapTotal.bytes()}
+- Heap Used: ${mem.heapUsed.bytes()}
+- External: ${mem.external.bytes()}
+- Array Buffers: ${mem.arrayBuffers.bytes()}`
 
 		send(memoryUsageMessage)
 		return

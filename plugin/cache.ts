@@ -1,14 +1,13 @@
-/** Cache manager:
- * It controls, limit and save
- * user/group cache.
- *
- * Cache saved on setings/cache/*.json
- */
-
 import { mkdir, readFile, unlink, writeFile } from 'fs/promises'
 import { Cmd, Collection, Group, User } from '../map.js'
 import { existsSync } from 'fs'
 
+/** Cache manager:
+ * It controls, limit and save
+ * user/group cache.
+ *
+ * Cache saved on conf/cache/*.json
+ */
 const cachedData = ['users', 'groups']
 
 class CacheManager {

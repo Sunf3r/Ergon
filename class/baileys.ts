@@ -15,14 +15,17 @@ import { logger } from '../util/proto.js'
 
 export default class Baileys {
 	sock!: WASocket
-
+	// sock is the real Baileys connection
 	constructor() {}
 
 	async connect() {
-		// Use saved session
+		// Use saved session (otherwise you'll need to log in again every time)
 		const { state, saveCreds } = process.env.DATABASE_URL
-			? await postgresAuthState('ergon')
+			? await postgresAuthState('ergon') // save auth creds/keys on db
+			// using postgresAuthState will avoid MANY problems you will
+			// encounter using the file system auth storing
 			: await useMultiFileAuthState('conf/auth')
+		// it is here just bc you may don't have a postgresql db setted.
 
 		this.sock = makeWASocket({
 			auth: {
@@ -31,7 +34,7 @@ export default class Baileys {
 				keys: makeCacheableSignalKeyStore(state.keys, logger),
 			},
 			logger,
-			markOnlineOnConnect: false,
+			markOnlineOnConnect: false, // your account won't be "online" all the time
 			browser: Browsers.macOS('Desktop'),
 			syncFullHistory: false,
 			shouldSyncHistoryMessage: () => false,
