@@ -3,8 +3,7 @@ import { prisma, User } from '../map.js'
 export { cleanMemories, createMemories }
 const memoryRegex = /{MEMORY:.+}/gi
 
-// createMemories: add memories to user
-async function createMemories(user: User, msg: AIMsg) {
+async function createMemories(user: User, msg: AIMsg) { // add memories to user
 	const matches = msg.text.match(memoryRegex)
 	if (!matches) return msg.text // no memories found
 
@@ -13,18 +12,19 @@ async function createMemories(user: User, msg: AIMsg) {
 
 		// check if memory already exists
 		if (m && !user.memories.includes(m)) {
-			// it do not exist, so add it
+			// it does not exist, so add it
 			user.memories.push(m)
 			msg.header += `- *🧠 Memória atualizada:* ${m.encode()}\n`
 			// remove placeholder from text
 			msg.text = msg.text.replace(memory, '')
 			continue
 		}
-		msg.text = msg.text.replace(memory, `*🧠 Consultando memória: ${m.encode()}*`)
+		msg.text = msg.text.replace(memory, '') // remove placeholder from text
+		msg.header += `*🧠 Memória ativada: ${m.encode()}*\n`
 	}
 
-	// update user in database
-	await prisma.users.update({
+	if (!process.env.DATABASE_URL) return
+	await prisma.users.update({ // update user memories in database
 		where: { id: user.id },
 		data: { memories: JSON.stringify(user.memories) },
 	})
@@ -32,9 +32,10 @@ async function createMemories(user: User, msg: AIMsg) {
 }
 
 async function cleanMemories(user: User) {
-	user.memories = []
+	user.memories = [] // delete all memories
 
-	await prisma.users.update({
+	if (!process.env.DATABASE_URL) return
+	await prisma.users.update({ // delete it also on DB
 		where: { id: user.id },
 		data: { memories: '' },
 	})

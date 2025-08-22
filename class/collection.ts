@@ -1,4 +1,4 @@
-export default class Collection<K, V> extends Map {
+export default class Collection<K, V> extends Map<K, V> {
 	primaryKey: str
 	limit: num
 
@@ -8,8 +8,8 @@ export default class Collection<K, V> extends Map {
 		this.limit = limit === 0 ? 0 : limit || 100 // items limit
 	}
 
-	get(key: K): V {
-		return super.get(key) as V
+	get(key: K): V | undefined {
+		return super.get(key)
 	}
 
 	// Add: adds a value to the collection
@@ -23,8 +23,8 @@ export default class Collection<K, V> extends Map {
 
 		const existing = this.get(key)
 		if (existing) {
-			if (!value) return existing
-			value = Object.assign(value, existing)
+			if (!value) return existing as V
+			value = Object.assign(value, existing) as V
 		}
 
 		this.set(key, value as V)
@@ -32,7 +32,7 @@ export default class Collection<K, V> extends Map {
 		if (this.limit && this.size > this.limit) {
 			const iter = this.keys()
 			while (this.size > this.limit) {
-				this.delete(iter.next().value)
+				this.delete(iter.next().value as K)
 			}
 		}
 
@@ -41,7 +41,7 @@ export default class Collection<K, V> extends Map {
 
 	// Filter: same as Array#filter
 	filter(func: (item: V) => any): V[] {
-		const res = []
+		const res: V[] = []
 
 		for (const item of this.values()) {
 			if (func(item)) res.push(item)
@@ -61,7 +61,7 @@ export default class Collection<K, V> extends Map {
 
 	// Map: same as Array#map
 	map<T>(func: (item: V) => T): T[] {
-		const arr = []
+		const arr: T[] = []
 
 		for (const item of this.values()) arr.push(func(item))
 
@@ -69,7 +69,7 @@ export default class Collection<K, V> extends Map {
 	}
 
 	// Reduce: same as Array#reduce
-	reduce(func: (preValue: V, nextValue: V) => V, initialValue = 0): any {
+	reduce(func: (preValue: V, nextValue: V) => V, initialValue: any = 0): any {
 		const items = this.values()
 		let next
 		let previous = initialValue || items.next().value
@@ -88,7 +88,7 @@ export default class Collection<K, V> extends Map {
 
 	// toJSON: Returns a JSON object containing the id: value pairs
 	toJSON() {
-		const json = {}
+		const json: Record<string, unknown> = {}
 
 		// @ts-ignore json obj does not have a type
 		for (const [k, v] of this.entries()) json[k] = v
@@ -101,7 +101,7 @@ export default class Collection<K, V> extends Map {
 		if (!obj) return
 
 		for (const [k, v] of Object.entries(obj)) {
-			this.add(k as K, v as V)
+			this.add(k as unknown as K, v as V)
 		}
 	}
 }

@@ -1,112 +1,109 @@
 {
 	"events": {
-		"cooldown": "[🕓] - Are you in a hurry? You were taxed in *{{time}}*, wait a minute"
+		"cooldown": "[🕓] - Are you in a hurry? You were taxed in *{{time}} *, wait a little bit there",
+		"nodb": "[💡] This command requires a configured database."
 	},
 	"langs": {
 		"pt": "Portuguese",
 		"en": "English",
 		"es": "Spanish",
 		"fr": "French",
-		"pl": "Polish"
+		"de": "German"
 	},
 	"usage": {
-		"title": "*[❗] - How to use it?*",
-		"args": "*[💡] - Types of parameters:*\n<required>\n[optional]\n(mentioned message)",
+		"title": "*[❗] - How to use?*",
+		"args": "*[💡] - Types of parameters:*\n<compulsory>\n[optional]\n(Message mentioned)",
 		"examples": "*[💯] - Examples:*"
 	},
 	"help": {
-		"usage": "[name of a command]",
-		"desc": "See more information about a command",
+		"usage": "[Name of a command]",
+		"desc": "See information about a command",
 		"examples": ["gemini", "sticker"],
-		"title": "*[📖] - Help menu*",
-		"prefix": "[⚙️] Change prefix: *{{prefix}}*",
-		"lang": "[🌎] Change language: *{{lang}}*"
+		"title": "*[📖] - Help Menu*",
+		"prefix": "[⚙️] Change prefix: *{{prefix}} *",
+		"lang": "[🌎] Change language: *{{lang}} *"
 	},
 	"language": {
-		"usage": "<language code>",
-		"desc": "Change the bot language",
-		"examples": ["PT", "en", "is", "fr", "pl"],
-		"changed": "[🌎] - Language changed to *{{lng}}*"
+		"usage": "<Language Code>",
+		"desc": "Change Bot language",
+		"examples": [
+			"{pt}: Portuguese",
+			"{en}: English",
+			"{fr}: French",
+			"{es}: Spanish",
+			"{de}: German"
+		],
+		"changed": "[🌎] - Language changed to *{{lng}} *"
 	},
 	"prefix": {
-		"usage": "<prefix with up to 3 digits>",
-		"desc": "Change the command prefix",
+		"usage": "<Prefix with up to 3 digits>",
+		"desc": "Change the prefix of commands",
 		"examples": [".", "!"],
-		"changed": "[✔️] - Your new prefix is: *{{prefix}}*"
+		"changed": "[✔️] - Your new prefix is: *{{prefix}} *"
 	},
-	"ping": { "desc": "See the bot's response time", "pinging": "Calculating response time..." },
+	"ping": { "desc": "See Bot Response Time" },
 	"choose": {
-		"usage": "<option 1>, <option 2>, [option 3], [...]",
+		"usage": "<Option 1>, <Option 2>, [Option 3], [...]",
 		"desc": "In doubt about what to do? Choose this or that",
 		"examples": [
 			"Pizza, cake, pudding, apple",
-			"I should do this, I shouldn't do this",
-			"Go for a walk, play video games"
+			"I should do this, I shouldn't do that",
+			"Go to the gym, play GTA 6"
 		],
-		"result": "*[🏆] - Option chosen:* {{chosen}}"
+		"result": "* [🏆] - chosen option:* {{chosen}}"
 	},
 	"gemini": {
-		"usage": "[pro: Gemini Pro]/[reset: Reset context window] <prompt> [(image/audio/video)]",
-		"desc": "Chat with Google AI",
+		"usage": "[CLEAN: Erases the historical] [Reset: Erases Memories and History] <Prompt> [(Media)]",
+		"desc": "Talk to Google AI",
 		"examples": [
-			"(image) Summarize the text in this image",
+			"(image) summarize the text of this image",
 			"What is the population of New York?",
-			"reset Who am I?",
-			"pro Explain quantum physics as if you were a teenager"
+			"Reset who am I?",
+			"Clean Do you remember what I asked you yesterday?"
 		]
 	},
-	"rank": {
-		"usage": "",
-		"desc": "See the ranking of members who talked the most in the group",
-		"examples": [""]
-	},
+	"rank": { "desc": "See the rank of members who talked the most in the group" },
 	"sticker": {
-		"usage": "<(image/gif)> [rmbg: removes the background of an image]",
-		"desc": "Create stickers without background!!!!",
-		"examples": ["rmbg <image attached>", "(image mentioned)"],
-		"nobuffer": "[⚠️] - Incompatible or not found media"
+		"usage": "<(Image/Video)> [Number: Image Quality from 1 to 100 (Standard: 1)] [RMBG: Remove the background from an image]",
+		"desc": "Create stickers without background !!!!",
+		"examples": ["(Image) RMBG", "(Image) 50", "(video)", "(sticker)"],
+		"nobuffer": "[⚠️] - Media incompatible or not found"
 	},
 	"clean": {
-		"usage": "<number of messages (max 200)>",
-		"desc": "Hide your crimes by deleting the latest group messages",
+		"usage": "<Number of messages (max 200)>",
+		"desc": "Hide your crimes erasing the latest group messages (requires administrator permission)",
 		"examples": ["10", "200"],
-		"noAmount": "\"clean 0\"? Do you think this is your room and you don't clean anything?",
-		"deleted": "I'm going to delete the last {{msgsSize}} messages and then I'm going to go back to sleep right here in my hammock"
-	},
-	"everyone": {
-		"usage": "[message content]",
-		"desc": "Mention all users in a group in a single message",
-		"examples": ["", "Urgent news!", "Shall we go to the cinema today?"]
-	},
-	"remind": {
-		"usage": "<duration> <message>",
-		"desc": "Schedule reminders",
-		"examples": ["10m 15s Shut down the nuclear reactor", "1h 42m Buy bread", "15s Cum"]
-	},
-	"reveal": {
-		"usage": "(single view media) [forever/f: reveal forever]",
-		"desc": "Just one more time! Reveal unique viewing media",
-		"examples": ["(single view image) forever", "(single view video)", "(single view audio) f"]
-	},
-	"search": {
-		"usage": "<question>",
-		"desc": "Google it!",
-		"examples": ["10 dollars in euros", "What time is it in London?"]
-	},
-	"translate": {
-		"usage": "<language code: en/pt/fr...> <text>",
-		"desc": "Google Translate",
-		"examples": ["fr Pussy", "es War is love"]
+		"noAmount": "\"Clean 0\"? Do you think here is your room that you do not clean anything?",
+		"deleted": "I will erase the last {{msgsSize}} messages and then I will go back to sleep right here on my network"
 	},
 	"download": {
-		"usage": "<audio/video> <url>",
-		"desc": "Download videos and audios",
+		"usage": "[A: Audio] <URL>",
+		"desc": "Download videos or audios",
+		"examples": ["(message with link)", "{link}", "A {link}"]
+	},
+	"everyone": {
+		"usage": "[message]",
+		"desc": "Mention all users of a group in a single message",
+		"examples": ["", "The game", "Urgent news!"]
+	},
+	"remove": {
+		"usage": "<Image>",
+		"desc": "Remove the background from an image",
+		"examples": ["<Image>", "(image)"]
+	},
+	"reveal": {
+		"usage": "(Unique visualization media)",
+		"desc": "Reveal a unique visualization media",
 		"examples": [
-			"audio https://music.youtube.com/watch?v=4QLvEIXlF6Q",
-			"to https://youtu.be/4QLvEIXlF6Q",
-			"video https://youtu.be/4QLvEIXlF6Q"
-		],
-		"true": "*[⌛] - Downloading the video... Please wait a moment.*",
-		"false": "*[⌛] - Downloading audio... Please wait a moment.*"
+			"(Unique viewing image)",
+			"(Unique viewing video)",
+			"(Unique viewing audio)",
+			"(sticker)"
+		]
+	},
+	"translate": {
+		"usage": "<language code: en/pt/fr ...> <text>",
+		"desc": "Google Translator",
+		"examples": ["EN Boots Cat", "pt the cat in the hat", "ES JE Suis Un Chat"]
 	}
 }

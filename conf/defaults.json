@@ -6,7 +6,8 @@
 		"gemini_chain": [
 			"gemini-2.0-flash-lite",
 			"gemini-2.0-flash",
-			"gemini-2.5-flash-preview-05-20"
+			"gemini-2.5-flash",
+			"gemini-2.5-pro"
 		],
 		"gemini_pro": "gemini-2.5-pro-preview-05-06"
 	},
@@ -17,7 +18,7 @@
 		"groupMsgs": 200
 	},
 	"runner": {
-		"tempFolder": "conf/temp/",
+		"tempFolder": "conf/temp",
 		"ytdlp": "conf/venv/bin/yt-dlp",
 		"py": {
 			"cmd": [
@@ -49,6 +50,12 @@
 			],
 			"ext": "ts"
 		},
+		"fish": {
+			"cmd": [
+				"fish"
+			],
+			"ext": "sh"
+		},
 		"zsh": {
 			"cmd": [
 				"zsh"
@@ -60,7 +67,32 @@
 				"g++ -o conf/temp/main ",
 				"./conf/temp/main #"
 			],
-			"ext": "cpp"
+			"ext": "cpp",
+			"triggers": [{
+				"notIncludes": ["int main"],
+				"template": "int main() { {{code}} }"
+			}, {
+				"notIncludes": ["#include <iostream>"],
+				"template": "#include <iostream>\n{{code}}"
+			}]
+		},
+		"rs": {
+			"cmd": [
+				"rustc -o conf/temp/main",
+				"./conf/temp/main"
+			],
+			"ext": "rs",
+			"triggers": [{
+				"notIncludes": ["fn main"],
+				"template": "fn main() { {{code}} }"
+			}]
+		},
+		"eval": {
+			"cmd": [],
+			"triggers": [{
+				"includes": ["await"],
+				"template": "(async () => { {{code}} })()"
+			}]
 		}
 	}
 }

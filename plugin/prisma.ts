@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
-import { Group, User } from '../map.js'
+import Group from '../class/group.js'
+import User from '../class/user.js'
 import cache from './cache.js'
 import bot from '../wa.js'
 
@@ -12,7 +13,7 @@ async function createUser({ phone, name }: { phone: str; name?: str }): Promise<
 	let id = Number(phone)
 	if (process.env.DATABASE_URL) {
 		const data = await prisma.users.create({
-			data: {
+			data: { // create user on DB if there is one
 				phone,
 				name,
 			},
@@ -34,15 +35,17 @@ async function getUser(
 		const number = phone!.parsePhone()
 		const data = cache.users.find((u) => u.phone === number)
 		if (data) return data
-		// not on cache, so lets search on db
+		// not on cache, so lets search it on db
 		const dbUser = await prisma.users.findUnique({ where: { phone: number } })
+			.catch(() => {}) // there is no DB. Let's just ignore it
+
 		if (!dbUser) {
 			// not on db, so it's a new user
 			return await createUser({ phone: number, name })
-			// createUser() will add it to cache
+			// createUser() will also add it to cache
 		}
 
-		// found on db, so lets create a User instance
+		// found on db, so let's create a User instance
 		const user = new User(dbUser)
 		cache.users.add(user.id, user)
 		return user

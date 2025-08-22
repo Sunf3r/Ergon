@@ -57,7 +57,7 @@ interface GroupMsg {
 }
 
 type GoogleFile = {
-	buffer: Buffer
+	buffer: Buffer<ArrayBufferLike> | ArrayBuffer
 	mime: str
 }
 type GeminiArgs = {
@@ -65,7 +65,7 @@ type GeminiArgs = {
 	input: str
 	user: User
 	chat?: str
-	callBack?: Func
+	callBack: Func
 	args: any[]
 	file?: GoogleFile
 }

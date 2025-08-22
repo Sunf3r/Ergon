@@ -1,6 +1,7 @@
 import { getGroup } from '../../plugin/prisma.js'
 import cache from '../../plugin/cache.js'
 import { GroupMetadata } from 'baileys'
+import { randomDelay } from '../../util/functions.js'
 
 // group update event
 export default async function (groups: Partial<GroupMetadata>[]) {
@@ -12,6 +13,7 @@ export default async function (groups: Partial<GroupMetadata>[]) {
 		// it fetchs group metadata
 		// fetching is better than use this event args
 		// bc it could be incomplete or partial
+		await randomDelay()
 	}
 	return
 }

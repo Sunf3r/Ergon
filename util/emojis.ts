@@ -48,6 +48,7 @@ const restrictEmojis = {
 	prohibited: '📛',
 	sparkles: '✨',
 	loading: '⌛',
+	alert: '⚠️',
 	block: '⛔',
 	clock: '🕓',
 	nodb: '📂',

@@ -1,5 +1,5 @@
 import { Cmd, CmdCtx, defaults, runCode } from '../../map.js'
-import { randomEmoji } from '../../util/emojis.js'
+import emojis, { randomEmoji } from '../../util/emojis.js'
 import { AnyMessageContent } from 'baileys'
 import { readFileSync } from 'node:fs'
 
@@ -37,12 +37,13 @@ export default class extends Cmd {
 			data.mimetype = 'audio/mpeg'
 		}
 
-		const path = `${defaults.runner.tempFolder}${data.fileName}`
+		const path = `${defaults.runner.tempFolder}/${data.fileName}`
 		cliArgs.push(`-o ${path}`)
 
+		let output = ''
 		try {
 			await startTyping()
-			await runCode('zsh', `${defaults.runner.ytdlp} ${cliArgs.join(' ')} "${url}"`)
+			output = await runCode('fish', `${defaults.runner.ytdlp} ${cliArgs.join(' ')} "${url}"`)
 
 			Object.setPrototypeOf(data, {
 				[type]: readFileSync(path),
@@ -53,7 +54,7 @@ export default class extends Cmd {
 
 			send(data as AnyMessageContent)
 		} catch (e: any) {
-			send(`Não foi possível baixar o arquivo:\n${e.message}`)
+			send(`[${emojis['alert']}] Não foi possível baixar o arquivo:\n${output}`)
 		}
 		return
 	}

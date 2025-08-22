@@ -1,33 +1,28 @@
-import { Collection, defaults, Msg, prisma, User } from '../map.js'
-import { GroupMetadata, GroupParticipant } from 'baileys'
+import { Collection, defaults, type Msg, prisma, User } from '../map.js'
+import type { GroupMetadata, GroupParticipant } from 'baileys'
 
 export default class Group {
 	id: str
 	owner?: str
 	name: str
-	nameTimestamp?: num
-	// group name modification date
+	nameTimestamp?: num // group name modification date
 	creation?: num
 	desc?: str
-	restrict?: bool
-	// restrict: is set when group only allows admins to change group settings
-	announce?: bool
-	// announce: is set when group only allows admins to write msgs
+	restrict?: bool // is set when group only allows admins to change group settings
+	announce?: bool // is set when group only allows admins to write msgs
 	members: GroupParticipant[]
-	size: num
-	// size: group members size
+	size: num // group members size
 	// ephemeral?: num;
 	invite?: str // invite link
-	author?: str
-	// author: the person who added you
-
-	msgs: Collection<str, Msg>
+	author?: str // the person who added you (this property name really sucks)
+	msgs: Collection<str, Msg> // cached msgs
 
 	constructor(data: Group | GroupMetadata) {
 		this.id = data.id
 		// @ts-ignore Shut up TypeScript
 		this.name = data.subject || data.name
-		// this.owner = g.owner
+		// this.owner = g.owner // it's commented bc I don't want to fill cache with it
+		// (I don't use it)
 		//@ts-ignore
 		this.nameTimestamp = data?.subjectTime || data?.nameTimestamp
 		this.creation = data.creation
@@ -44,14 +39,14 @@ export default class Group {
 		this.msgs = new Collection(defaults.cache.groupMsgs)
 
 		// @ts-ignore
-		this.msgs.iterate(data?.msgs)
+		this.msgs.iterate(data?.msgs) // retrieve cached msgs on startup (if exists)
 	}
 
 	async countMsg(user: User, msg: Msg) { // +1 to group member msgs count
-		this.msgs.add(msg.key.id!, msg)
+		this.msgs.add(msg.key.id!, msg) // add it to cache
 		if (!process.env.DATABASE_URL || msg.isBot) return
 
-		await prisma.msgs.upsert({
+		await prisma.msgs.upsert({ // save it on db
 			where: {
 				author_group: {
 					author: user.id,
@@ -69,19 +64,8 @@ export default class Group {
 		return
 	}
 
-	async getCountedMsgs(author?: num) {
+	async getCountedMsgs() {
 		if (!process.env.DATABASE_URL) return []
-
-		// if (author) {
-		// 	return await prisma.msgs.findUnique({
-		// 		where: {
-		// 			author_group: {
-		// 				author,
-		// 				group: this.id.parsePhone(),
-		// 			},
-		// 		},
-		// 	})
-		// }
 
 		const msgs = await prisma.msgs.findMany({
 			where: {

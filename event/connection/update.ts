@@ -1,9 +1,11 @@
 import { type ConnectionState, DisconnectReason } from 'baileys'
+import { loadEvents } from '../../util/handler.js'
 import { Collection, delay } from '../../map.js'
-import bot, { start } from '../../wa.js'
+import bot from '../../wa.js'
 import QRCode from 'qrcode'
+import { randomDelay } from '../../util/functions.js'
 
-// Keep last 5 logins DateTime
+// Keep last 5 logins DateTime to avoid reconecting too fast
 const lastLogins = new Collection<num, num>(5)
 
 // connection update event
@@ -20,7 +22,7 @@ export default async function (event: Partial<ConnectionState>) {
 	switch (event.connection) {
 		case 'open': // bot started
 			// don't show online mark when bot is running
-			bot.sock.sendPresenceUpdate('unavailable')
+			// bot.sock.sendPresenceUpdate('unavailable')
 			print('NET', 'Connection stabilized', 'green')
 
 			// let timeout = cache.timeouts.get('cacheAllGroups')
@@ -45,20 +47,18 @@ export default async function (event: Partial<ConnectionState>) {
 
 			const reconnect = shouldReconnect(exitCode)
 
+			if (!reconnect) return print('WA', 'Logged out', 'red')
 			// reconnect if it's not a logout
-			if (reconnect) {
-				if (reconnect === 'wait') {
-					print('NET', 'Waiting a minute to reconnect...', 'gray')
-					await delay(60_000)
-				}
-
-				const now = Date.now()
-				lastLogins.add(now, now)
-				bot.connect()
-				// start()
-				return
+			if (reconnect === 'wait') {
+				print('NET', 'Waiting a minute to reconnect...', 'gray')
+				await delay(60_000)
+				await randomDelay()
 			}
-			print('WA', 'Logged out', 'red')
+
+			const now = Date.now()
+			lastLogins.add(now, now)
+			await bot.connect()
+			loadEvents()
 			return
 	}
 	return

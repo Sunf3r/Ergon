@@ -1,5 +1,5 @@
-import prisma, { getUser } from './prisma.js'
 import { randomDelay } from '../util/functions.js'
+import prisma, { getUser } from './prisma.js'
 import { send } from '../util/messages.js'
 import { User } from '../map.js'
 
@@ -10,20 +10,20 @@ let nextAlarmTime = 0
 const alarmRegex = /{ALARM:.+:[0-9].+}/gi
 
 async function sendAlarms() {
+	if (!process.env.DATABASE_URL) return // there is no DB
 	const alarms: Alarm[] = await prisma.alarms.findMany({
-		where: { // only get alarms that are not sent
-			status: 0,
+		where: {
+			status: 0, // only get alarms that are not sent
 		},
-		orderBy: { // order by time ascending
-			time: 'asc',
+		orderBy: {
+			time: 'asc', // order by time ascending
 		},
 	})
 
 	for (const a of alarms) {
-		const time = Number(a.time)
-		// alarm alert time
+		const time = Number(a.time) // alarm alert time
 
-		if (time > Date.now()) continue
+		if (time > Date.now()) continue // not its time rn
 		const user = await getUser({ id: a.author })
 
 		// send alarm to chat mentioning user
@@ -34,7 +34,7 @@ async function sendAlarms() {
 			.then(async () => {
 				await prisma.alarms.update({
 					where: { id: a.id },
-					data: { status: 1 },
+					data: { status: 1 }, // alarm was sent
 				})
 				print('ALARM', `'${a.msg}' to ${user!.phone} (${a.chat})`, 'blue')
 			})
@@ -57,8 +57,7 @@ async function sendAlarms() {
 	return
 }
 
-// scheduleAlarmCheck: set timeout for the next alarm check
-function scheduleAlarmCheck(time: num) {
+function scheduleAlarmCheck(time: num) { // set timeout for the next alarm check
 	clearTimeout(alarmTimeout)
 	nextAlarmTime = time
 	alarmTimeout = setTimeout(sendAlarms, time - Date.now())
@@ -97,11 +96,11 @@ async function createAlarms(user: User, msg: AIMsg, chat: str) {
 	}
 }
 
-// getUserAlarms: get all alarms created by the user
-async function getUserAlarms(user: User) {
+async function getUserAlarms(user: User) { // get all alarms created by the user
+	if (!process.env.DATABASE_URL) return ['Nenhum alarme.']
 	const alarms: Alarm[] = await prisma.alarms.findMany({ where: { author: user.id } })
 
-	if (!alarms[0]) return ['Nenhum alarme encontrado.']
+	if (!alarms[0]) return ['Nenhum alarme.']
 
 	return alarms.map((r) =>
 		`MESSAGE: "${r.msg}". TIME: "${new Date(r.time).toLocaleString(user.lang)}"`

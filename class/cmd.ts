@@ -5,6 +5,7 @@ export default abstract class Cmd {
 	name: str
 	alias: str[]
 	subCmds: str[]
+	/** Cooldown in miliseconds */
 	cooldown: num
 	access: Partial<{
 		dm: bool // cmd can run on DM
@@ -17,7 +18,8 @@ export default abstract class Cmd {
 	constructor(c: Partial<Cmd>) {
 		this.name = c.name || ''
 		this.alias = c.alias || []
-		this.cooldown = c.cooldown === 0 ? 0 : c.cooldown || 3 // Ignore some cmds cooldown
+		// default cooldown is 3 seconds; allow explicit 0 to disable
+		this.cooldown = c.cooldown === 0 ? 0 : c.cooldown || 3_000
 		this.subCmds = c.subCmds || []
 		this.access = Object.assign({
 			dm: true,
@@ -41,9 +43,10 @@ export default abstract class Cmd {
 		// if a normal user tries to run a only-for-devs cmd
 
 		if (this.access.restrict && !isDev) return reactMsg('prohibited')
+		// restrict means only devs can run this cmd
 
 		if (group) { // if msg chat is a group
-			if (!this.access.groups) return reactMsg('block')
+			if (!this.access.groups) return reactMsg('block') // this cmd can't run on groups
 
 			const admins = group.members.map((m) => m.admin && m.id) || []
 			// all group admins id
@@ -51,12 +54,11 @@ export default abstract class Cmd {
 			if (this.access.admin && (!admins.includes(user.chat) && !isDev)) {
 				return reactMsg('prohibited') // Devs can use admin cmds for security reasons
 			}
-		} else if (!this.access.dm) return reactMsg('block')
-		// if there's no group and cmd can't run on DM
+		} else if (!this.access.dm) return reactMsg('block') // this cmd can't run on DMs
 
 		if (this.access.needsDb && !process.env.DATABASE_URL) return sendMsg('events.nodb')
+		// there is no DB and cmd can't run without it
 
-		// if cmd requires database to run
 		return true
 	}
 }

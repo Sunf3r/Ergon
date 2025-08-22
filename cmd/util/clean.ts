@@ -36,17 +36,17 @@ export default class extends Cmd {
 		for (const i in msgs) {
 			if (Number(i) % 10 === 0 && i !== '0') await delay(1_000)
 			await deleteMsg.bind(msgs[i]) // delete msg for everyone
-			group.msgs.delete(msgs[i].id) // delete it from cache
+			group.msgs.delete(msgs[i].id!) // delete it from cache
 
 			await delay(500)
 		}
 
 		if (disclaimerMsg) { // delete disclaimer msg
 			await deleteMsg.bind(disclaimerMsg.msg)
-			group.msgs.delete(disclaimerMsg.msg.key.id)
+			group.msgs.delete(disclaimerMsg.msg.key.id!)
 		}
 		deleteMsg.bind(msg) // delete cmd msg
-		group.msgs.delete(msg.key.id)
+		group.msgs.delete(msg.key.id!)
 		return
 	}
 }

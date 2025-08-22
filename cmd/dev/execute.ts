@@ -11,9 +11,7 @@ export default class extends Cmd {
 
 	async run({ args, send }: CmdCtx) {
 		const startTime = Date.now()
-		const code = args.join(' ')
-
-		let output = await runCode('zsh', code)
+		const output = await runCode('fish', args.join(' '))
 		// runCode: run on a child process
 
 		// execution duration
