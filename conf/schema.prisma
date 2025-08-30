@@ -35,7 +35,7 @@ model msgs {
 }
 
 model BaileysAuthCreds {
-  sessionId String  @id
+  sessionId String @id
   data      Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

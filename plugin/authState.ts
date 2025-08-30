@@ -27,70 +27,28 @@ const postgresAuthState = async (
 ): Promise<{ state: AuthenticationState; saveCreds: () => Promise<void> }> => {
 	const sessionId = folder
 
-	const writeData = async (data: any, file: string) => {
-		if (file === 'creds.json') {
-			const json = toStorableJson(data)
-			await prisma.baileysAuthCreds.upsert({
-				where: { sessionId },
-				create: { sessionId, data: json },
-				update: { data: json },
-			})
-			return
-		}
-
-		const match = /^(.*?)-(.*)\.json$/.exec(file)
-		if (!match) return
-		const [, category, keyId] = match
+	const writeCreds = async (data: any) => {
 		const json = toStorableJson(data)
-
-		await prisma.baileysAuthKey.upsert({
-			where: { sessionId_category_keyId: { sessionId, category, keyId } },
-			create: { sessionId, category, keyId, data: json },
+		await prisma.baileysAuthCreds.upsert({
+			where: { sessionId },
+			create: { sessionId, data: json },
 			update: { data: json },
 		})
 	}
 
-	const readData = async (file: string) => {
-		try {
-			if (file === 'creds.json') {
-				const row = await prisma.baileysAuthCreds.findUnique({ where: { sessionId } })
-				return fromStorableJson(row?.data)
-			}
-			const match = /^(.*?)-(.*)\.json$/.exec(file)
-			if (!match) return null
-			const [, category, keyId] = match
-			const row = await prisma.baileysAuthKey.findUnique({
-				where: { sessionId_category_keyId: { sessionId, category, keyId } },
-			})
-			return fromStorableJson(row?.data)
-		} catch {
-			return null
-		}
+	const readCreds = async () => {
+		const row = await prisma.baileysAuthCreds.findUnique({ where: { sessionId } })
+		return fromStorableJson<AuthenticationCreds>(row?.data)
 	}
 
-	const removeData = async (file: string) => {
-		try {
-			if (file === 'creds.json') {
-				await prisma.baileysAuthCreds.delete({ where: { sessionId } }).catch(() => {})
-				return
-			}
-			const match = /^(.*?)-(.*)\.json$/.exec(file)
-			if (!match) return
-			const [, category, keyId] = match
-			await prisma.baileysAuthKey
-				.delete({ where: { sessionId_category_keyId: { sessionId, category, keyId } } })
-				.catch(() => {})
-		} catch {}
-	}
-
-	const creds: AuthenticationCreds = (await readData('creds.json')) || initAuthCreds()
+	const creds: AuthenticationCreds = (await readCreds()) || initAuthCreds()
 
 	return {
 		state: {
 			creds,
 			keys: {
 				get: async (type, ids) => {
-					if (!ids.length) return {}
+					if (!ids.length) return {} as any
 					const rows = await prisma.baileysAuthKey.findMany({
 						where: {
 							sessionId,
@@ -137,15 +95,10 @@ const postgresAuthState = async (
 									}),
 								)
 							} else {
+								// deleteMany não lança erro quando o registro não existe
 								ops.push(
-									prisma.baileysAuthKey.delete({
-										where: {
-											sessionId_category_keyId: {
-												sessionId,
-												category,
-												keyId,
-											},
-										},
+									prisma.baileysAuthKey.deleteMany({
+										where: { sessionId, category, keyId },
 									}),
 								)
 							}
@@ -153,22 +106,14 @@ const postgresAuthState = async (
 					}
 
 					if (ops.length) {
-						try {
-							await prisma.$transaction(ops)
-						} catch (err) {
-							if (
-								!(err instanceof Error &&
-									err.message.includes('Record to delete does not exist'))
-							) {
-								throw err
-							}
-						}
+						// Opcional: você pode fatiar em lotes se o número de operações for muito grande
+						await prisma.$transaction(ops)
 					}
 				},
 			},
 		},
 		saveCreds: async () => {
-			await writeData(creds, 'creds.json')
+			await writeCreds(creds)
 		},
 	}
 }
