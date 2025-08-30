@@ -132,16 +132,27 @@ npm start
 
 ### `4 -` 🔐 Log in:
 
-## Just scan the QR Code that will appear on terminal and then it's ready!
+- Just scan the QR Code that will appear on terminal and then it's ready!
 
 > ⚠️ » All logs and QR codes will appear on `conf/log.txt`.
 
+### Also, read the important notes bellow
+
 # `-1.` 🗒️ Important Notes:
 
-- Random Delays are implemented on several places to prevent Ergon from being flagged as a Bot by
-  Meta anti-bot detectors. I don't recommend removing it.
+## Using Download cmd
 
-- Updating:
+- For using download cmd you should provide session cookies for YouTube, X (Twitter), TikTok,
+  Instagram, etc.
+- export your cookies.txt using a browser extension and place it at `conf/cookies.txt`.
+
+## Random delays
+
+- Random Delays are implemented on several places to prevent Ergon from being flagged as a Bot by
+  Meta anti-bot detectors.
+- **I don't recommend removing it.**
+
+## Updating:
 
 ```
 # Stopping services
@@ -163,6 +174,8 @@ npm start
 > ⚠️ » _None of these scripts will update `Python`, `LuaJIT`, `PostgreSQL`, `G++` or `GIT`. You
 > still need to do it by yourself_
 
+# Reset
+
 - I recommend you to reset and log out WhatsApp Web sometimes to fix decrypt bugs
 
 ```
@@ -174,12 +187,13 @@ npm start # Starting all services
 # Scan QR Code
 ```
 
-- Experiencing bugs? Open a issue with your problem or make a pull request with the solution. I will
-  try to fix it as soon as possible.
+# Extras:
+
+- Experiencing bugs? Open a issue with your problem or make a pull request with the solution.
+- I will try to fix it as soon as possible.
+- If you need help, feel free to ask me on Discord (it's in my profile).
 
 - This bot was made to run on Linux, but you can run it on Windows just changing script or using
   WSL.
-
-- If you need help, feel free to ask me on Discord (it's in my profile).
 
 ### I hope you like it :)
