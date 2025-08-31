@@ -2,6 +2,8 @@ import baileys, {
 	type AuthenticationCreds,
 	type AuthenticationState,
 	BufferJSON,
+	initAuthCreds,
+	proto,
 	type SignalDataTypeMap,
 } from 'baileys'
 import type { PrismaPromise } from '@prisma/client'
@@ -12,8 +14,6 @@ import prisma from './prisma.js'
  * if you don't have a DB, file system auth storing
  * will be used instead
  */
-
-const { initAuthCreds, proto } = baileys
 
 const toStorableJson = (value: unknown) => JSON.parse(JSON.stringify(value, BufferJSON.replacer))
 

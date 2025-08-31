@@ -30,7 +30,7 @@
 	"dependencies": {
 		"@google/genai": "^1.16.0",
 		"@prisma/client": "^6.15.0",
-		"baileys": "^6.7.18",
+		"baileys": "^6.7.19",
 		"chalk": "^5.6.0",
 		"google-translate": "github:iamtraction/google-translate",
 		"humanize-duration": "^3.33.0",
