@@ -21,14 +21,14 @@ model alarms {
   id     Int    @id @default(autoincrement())
   author Int
   chat   String @db.VarChar()
-  msg    String @db.VarChar(256)
+  msg    String @db.VarChar()
   time   String @db.VarChar()
   status Int    @default(0)
 }
 
 model msgs {
   author Int
-  group  String @db.VarChar(35)
+  group  String @db.VarChar()
   count  Int    @default(1)
 
   @@id([author, group])

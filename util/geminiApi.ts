@@ -1,8 +1,8 @@
 import { createPartFromUri, FileState, GenerateContentResponse, GoogleGenAI } from '@google/genai'
-import { createAlarms, getUserAlarms } from '../plugin/alarms.js'
 import { GeminiArgs, GoogleFile } from '../conf/types/types.js'
 import { randomDelay, randomTime } from './functions.js'
 import { createMemories } from '../plugin/memories.js'
+import { createAlarms } from '../plugin/alarms.js'
 import { defaults, delay, User } from '../map.js'
 
 const GoogleAI = new GoogleGenAI({ apiKey: process.env.GEMINI })
@@ -77,8 +77,6 @@ async function getModelConfig(user: User) {
 			'# Não cite memórias ou alarmes no modelo. Diga sobre o que se trata, mas não escreva {MEMORY:texto} e nem {ALARM:texto:1h} quando estiver referenciando uma memória ou alarme.',
 			'Memórias do usuário:',
 			...user.memories,
-			'Alarmes do usuário:',
-			...(await getUserAlarms(user)),
 		],
 	}
 }
